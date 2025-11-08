@@ -1,0 +1,71 @@
+# Environment and secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Model files (too large for git)
+models/
+*.safetensors
+*.gguf
+*.bin
+*.pth
+*.pt
+
+# Large data files
+data/transcripts/
+data/*.jsonl
+data/mlx_training_data/
+data/processed/
+data/raw/
+
+# Keep structure files
+!data/.gitkeep
+!models/.gitkeep
+
+# Training outputs
+train_command.sh
+training_output.log
+*.png
+*.jpg
+
+# Temporary files
+*.tmp
+*.log
+.cache/
+
+# OS files
+Thumbs.db

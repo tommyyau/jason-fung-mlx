@@ -3,172 +3,198 @@
 ## TL;DR
 
 **✅ Use These (16GB RAM):**
-- Llama 3.2 3B Instruct (production model)
-- Qwen 2.5 1.5B/3B (alternative)
+- **Llama 3.2 3B Instruct** - Production model (no issues)
+- **Qwen 2.5 1.5B** - Best alternative (faster, lower memory)
 
 **❌ Don't Use These:**
-- Granite 3.0/4.0 - GGUF conversion fails
-- Gemma 2 9B - Out of memory (needs 24GB+ RAM)
+- **Granite 4.0** - MoE architecture unsupported by MLX
+- **Gemma 3N E4B** - OOM on 16GB RAM + format issues
 
 ---
 
 ## What You Found
 
-### 1. Granite Models - GGUF Conversion Failure ⚠️
+### 1. Granite 4.0 - MoE Architecture Incompatible ⚠️
 
-**Status:** Training works, deployment fails
+**Status:** MLX doesn't support Mixture of Experts (MoE)
 
 **Problem:**
-- MLX training: ✅ Success
-- LoRA fusion: ✅ Success
-- GGUF conversion: ❌ **FAILS**
+> "Granite - basically they blended in two technologies, and because it's two technologies, MLX (Apple MLX) doesn't seem to actually support it anymore."
 
-**Root Cause:**
-Granite uses a non-standard architecture (Multi-head Latent Attention / MoLA) that stores weights differently:
-- Standard Transformer: `[num_heads * head_dim, model_dim]`
-- Granite: `[num_heads, head_dim, model_dim]` (extra dimension)
+**Technical Details:**
+- Granite uses **MoE (Mixture of Experts)** architecture
+- MoE = multiple "expert" sub-networks with routing mechanism
+- MLX designed for standard Transformers, not MoE
+- Requires: dynamic expert selection, sparse activation, load balancing, custom gradient routing
+- None of these are implemented in MLX
 
-The llama.cpp GGUF converter expects standard Transformer format and cannot handle Granite's architecture.
-
-**Error:**
-```
-ValueError: Cannot reshape weight 'model.layers.0.self_attn.q_proj.weight'
-Expected shape: [3072, 3072]
-Got shape: [3072, 1, 3072]
-Shape mismatch: extra dimension cannot be squeezed
-```
-
-**Conclusion:** Granite is incompatible with the GGUF deployment pipeline.
+**Conclusion:** Granite's "two technologies" (Transformer + MoE) fundamentally incompatible with MLX.
 
 ---
 
-### 2. Gemma 2 9B - Memory Constraints ❌
+### 2. Gemma 3N E4B - Memory Exhaustion ❌
 
-**Status:** Out of memory, cannot train
+**Status:** Out of memory, cannot train on 16GB RAM
 
 **Problem:**
-- Model loading: ❌ System freeze
-- Training: ❌ Kernel panic / force quit
-- Memory required: 18-24GB
-- Available on 16GB MacBook Pro: ~12GB
+> "Gemma 3n e4b... was just a little bit too big. It basically ran out of space... I couldn't train on quantized model, and so it just basically blew out my 16 GB."
 
-**Why It Fails:**
-
-Even with LoRA (only 0.2% trainable parameters):
+**Memory Analysis:**
 ```
-Base model (FP16): 9B params × 2 bytes = 18GB
-LoRA adapters: ~200MB
-Activations: ~4-6GB
+4B parameters × 2 bytes (FP16) = 8GB base model
++ LoRA adapters: ~400MB
++ Gradients: ~400MB
++ Activations: ~4-6GB
 ────────────────────────────
-Total: 22-24GB required
-Available: 12GB (after macOS overhead)
+Total: 13-15GB required
+Available: ~12GB (16GB - macOS overhead)
 Result: OUT OF MEMORY ❌
 ```
 
+**Aggressive Optimizations Tried (Still Failed):**
+- max_seq_length: 1024 → 256 (-75%)
+- lora_rank: 8 → 4 (-50%)
+- num_layers: 12 → 8 (-33%)
+- steps_per_eval: DISABLED (validation caused OOM)
+
+**Still failed:** Model simply too large for 16GB RAM during training.
+
 **Why "Mobile Optimized" is Misleading:**
 
-| Marketing Claim | Reality |
-|----------------|---------|
-| "Runs on phones" | ✅ True for **inference** (4-bit quantized, 2.3GB) |
-| "Trainable on edge" | ❌ False for **training** (FP16, 18GB+) |
+| Claim | Reality |
+|-------|---------|
+| "Runs on phones" | ✅ True for **inference** (4-bit, ~1GB) |
+| "Trainable on edge" | ❌ False for **training** (FP16, ~13-15GB) |
 
-**Training requires full precision** - you cannot quantize during training. The 9B parameter count makes it impossible to train on 16GB RAM.
-
-**Conclusion:** Gemma 2 9B requires 24GB+ RAM for training.
+You cannot quantize during training - requires FP16 minimum for numerical stability.
 
 ---
 
-### 3. Qwen 2.5 - Fully Compatible ✅
+### 3. Gemma Chat Format Issue 😤
 
-**Status:** Works perfectly
+**Problem:**
+> "Gemma was just insistent on changing the format of mlx to be whatever the Gemma format was, some sort of chat format that was a bit nuts."
 
-**Results:**
-- MLX training: ✅ Success
-- GGUF conversion: ✅ Success
-- Memory usage: 1.5B (~4GB), 3B (~8GB)
+**Standard MLX Format:**
+```json
+{"messages": [
+  {"role": "user", "content": "question"},
+  {"role": "assistant", "content": "answer"}
+]}
+```
 
-**Why It Works:**
-- Standard architecture fully supported by MLX
-- Excellent conversion pipeline support
-- Multiple sizes for different RAM configurations
+**Gemma Format:**
+```json
+{"text": "<start_of_turn>user\nquestion<end_of_turn>\n<start_of_turn>model\nanswer<end_of_turn>\n"}
+```
 
-**Recommendation:** Use Qwen 2.5 1.5B or 3B as an alternative to Llama 3.2 3B.
+**Solution Required:**
+- Run conversion script: `scripts/phase3-prepare-data-mlx/04b_convert_mlx_to_gemma.py`
+- Creates separate `train_gemma.jsonl` and `valid_gemma.jsonl` files
+- Extra step, easy to forget, annoying
+
+**Affects:** Gemma 3 Text 4B (works with conversion) AND Gemma 3N E4B (OOM anyway)
+
+---
+
+### 4. Qwen 2.5 - The One That Works ✅
+
+**Status:** Fully compatible, no issues
+
+**Why it works:**
+- Standard architecture (no MoE)
+- Small enough for 16GB RAM (~4GB peak)
+- Uses standard MLX format (no conversion needed)
+- Excellent MLX support
+
+**User Choice:**
+> "I eventually decided to use Qwen 2.5, and that seems to be a lot easier to actually work with"
+
+**Recommendation:** ✅ Use this or Llama 3.2 3B.
 
 ---
 
 ## Memory Requirements by Model
 
-| Model | Parameters | Training RAM | GGUF Conversion | Status |
-|-------|-----------|-------------|-----------------|--------|
-| Llama 3.2 3B | 3B | ~7.6GB | ✅ Works | ✅ Production |
-| Qwen 2.5 1.5B | 1.5B | ~4GB | ✅ Works | ✅ Alternative |
-| Qwen 2.5 3B | 3B | ~8GB | ✅ Works | ✅ Alternative |
-| Granite 4.0 | 3B | ~8GB | ❌ Fails | ⚠️ Training only |
-| Gemma 2 9B | 9B | ~22GB | N/A | ❌ OOM |
-| Mistral 7B | 7B | ~14GB | ✅ Works | ⚠️ Tight fit |
+| Model | Parameters | Training RAM | Format | Status |
+|-------|-----------|--------------|--------|--------|
+| Llama 3.2 3B | 3B | ~7.6GB | Standard MLX | ✅ Production |
+| Qwen 2.5 1.5B | 1.5B | ~4GB | Standard MLX | ✅ Alternative |
+| Gemma 3 Text 4B | 4B | ~6.9GB | Custom (conversion) | ⚠️ Works with extra steps |
+| Granite 4.0 | 3B | N/A | N/A | ❌ MoE unsupported |
+| Gemma 3N E4B | 4B | ~13-15GB | Custom (conversion) | ❌ OOM |
 
 ---
 
 ## What This Means for Your Pipeline
 
-**Current Setup (16GB RAM):**
-- ✅ Llama 3.2 3B: Fully compatible, tested, production-ready
-- ✅ Qwen 2.5 1.5B/3B: Fully compatible alternatives
-- ❌ Granite: Cannot deploy (GGUF conversion fails)
-- ❌ Gemma 2 9B: Cannot train (memory constraints)
+**Current Setup (16GB RAM M1 MacBook Pro):**
+
+✅ **Use:**
+- Llama 3.2 3B (current production model)
+- Qwen 2.5 1.5B (your successful alternative)
+
+⚠️ **Possible but annoying:**
+- Gemma 3 Text 4B (requires format conversion + config cleanup)
+
+❌ **Don't bother:**
+- Granite 4.0 (MLX architecture incompatibility)
+- Gemma 3N E4B (memory + format issues)
 
 **If You Had 24GB+ RAM:**
-- ✅ Gemma 2 9B: Would work for training
-- ✅ Mistral 7B: More comfortable
-- ❌ Granite: Still fails (architecture issue, not memory)
+- ✅ Gemma 3N E4B would work (but still needs format conversion)
+- ✅ Mistral 7B would work
+- ❌ Granite still fails (architecture issue, not memory)
 
 **If You Had 32GB+ RAM:**
 - ✅ Any model up to 13B parameters
-- ❌ Granite: **Still fails** (conversion issue is fundamental)
+- ❌ Granite **still fails** (MoE is fundamental incompatibility)
 
 ---
 
 ## Key Takeaways
 
-1. **MLX Training ≠ Production Deployment**
-   - A model that trains doesn't guarantee conversion works
-   - Always test the full pipeline: train → fuse → HF → GGUF
-
-2. **Architecture Matters More Than Size**
-   - Granite (3B): Trains but can't convert (non-standard architecture)
-   - Llama (3B): Full pipeline works (standard architecture)
+1. **Architecture > Size**
+   - Granite (3B with MoE): Fails
+   - Llama (3B standard): Works
    - Architecture compatibility is critical
 
-3. **"Mobile Optimized" is Marketing**
-   - Gemma 2 9B "mobile optimized" = inference only
-   - Training still requires 18GB+ RAM (full precision)
-   - Don't be fooled by deployment claims
+2. **"Mobile Optimized" is Marketing**
+   - Gemma 3N E4B "mobile optimized" = inference only
+   - Training still requires 13-15GB RAM (full precision)
+   - Don't be fooled by deployment/inference claims
 
-4. **Memory Math is Real**
+3. **Memory Math is Real**
    - LoRA doesn't reduce base model memory
-   - You need the full model in RAM even with LoRA
-   - Parameter count × 2 bytes (FP16) = minimum RAM needed
+   - You need full model in RAM even with LoRA
+   - Parameter count × 2 bytes (FP16) = minimum RAM
+   - Add 50% for activations/gradients/optimizer
+
+4. **Format Compatibility Matters**
+   - Standard MLX format: No issues
+   - Custom Gemma format: Extra conversion step
+   - Prefer standard format to avoid hassle
 
 5. **Use Proven Models**
    - Llama 3.2 3B: Fully tested, works end-to-end
    - Qwen 2.5: Excellent alternative, full compatibility
-   - Don't experiment with unproven architectures in production
+   - Don't experiment with incompatible architectures in production
 
 ---
 
 ## Recommendations
 
 **For this project (16GB RAM):**
-1. ✅ **Keep using Llama 3.2 3B** - fully tested, production-ready
-2. ✅ **Consider Qwen 2.5 3B** - alternative with similar performance
-3. ❌ **Avoid Granite** - cannot deploy to GGUF
-4. ❌ **Avoid Gemma 2 9B** - insufficient memory
+1. ✅ **Keep using Llama 3.2 3B** - production model, no issues
+2. ✅ **Qwen 2.5 1.5B is perfect** - your choice is correct
+3. ❌ **Avoid Granite** - MLX doesn't support MoE
+4. ❌ **Avoid Gemma 3N E4B** - too large + format hassle
 
 **Testing new models:**
-1. Check parameter count (max 3B for 16GB RAM)
-2. Verify architecture (standard Transformer preferred)
-3. Test full pipeline (train → convert → deploy)
-4. Don't assume "mobile optimized" = "trainable on edge"
+1. Check architecture (no MoE for MLX)
+2. Estimate memory: params × 2 bytes × 1.5 (overhead)
+3. Check format compatibility (prefer standard MLX)
+4. Test with 10 iterations before full training
 
 ---
 

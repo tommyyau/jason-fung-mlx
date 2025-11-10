@@ -15,29 +15,46 @@ import shutil
 from pathlib import Path
 from typing import Dict, List
 
+# Load configuration
+script_dir = Path(__file__).parent
+project_root = script_dir.parent.parent
+sys.path.insert(0, str(project_root / "config"))
+from load_config import load_config, get_training_config, get_data_config
+
 # ─────────────────────────────
-# Configuration
+# Configuration (loaded from training_config.yaml)
 # ─────────────────────────────
-TRAIN_FILE = "data/generated_answers_mlx_train.jsonl"
-VAL_FILE = "data/generated_answers_mlx_validate.jsonl"
+config = load_config()
+training_config = get_training_config()
+data_config = get_data_config()
+lora_config = training_config.get("lora", {})
+
+TRAIN_FILE = data_config.get("train_file", "data/generated_answers_mlx_train.jsonl")
+VAL_FILE = data_config.get("val_file", "data/generated_answers_mlx_validate.jsonl")
 TEST_FILE = "data/jason_fung_qna_mlx_test.jsonl"
 
 # Default model (can be overridden via command line)
-# Using Llama 3.2 3B Instruct - no authentication required, pre-converted by MLX
-DEFAULT_MODEL = "mlx-community/Llama-3.2-3B-Instruct"  # Llama 3.2 3B Instruct (no auth needed)
+DEFAULT_MODEL = training_config.get("model", "mlx-community/Llama-3.2-3B-Instruct")
 
-# Training hyperparameters
-# Optimized for 16GB RAM M1 MacBook Pro
-LEARNING_RATE = 5e-6  # Reduced from 1e-5 to mitigate catastrophic forgetting
-BATCH_SIZE = 1  # Reduced from 4 to save memory
-NUM_EPOCHS = 2  # Reduced from 3 to mitigate catastrophic forgetting
-GRADIENT_ACCUMULATION_STEPS = 8  # Increased for more stable gradients and reduced catastrophic forgetting
-MAX_SEQ_LENGTH = 1024  # Increased to prevent truncation of longer answers
-SAVE_EVERY_N_STEPS = 500
-EVAL_STEPS = 50
+# Training hyperparameters (optimized for 16GB RAM M1 MacBook Pro)
+LEARNING_RATE = training_config.get("learning_rate", 5e-6)
+BATCH_SIZE = training_config.get("batch_size", 1)
+NUM_EPOCHS = training_config.get("epochs", 3)
+GRADIENT_ACCUMULATION_STEPS = training_config.get("gradient_accumulation_steps", 8)
+MAX_SEQ_LENGTH = training_config.get("max_seq_length", 1024)
+SAVE_EVERY_N_STEPS = training_config.get("save_every", 500)
+EVAL_STEPS = training_config.get("steps_per_eval", 50)
+
+# LoRA configuration
+LORA_ENABLED = lora_config.get("enabled", True)
+LORA_LAYERS = lora_config.get("layers", 12)
+LORA_RANK = lora_config.get("rank", 6)
+LORA_ALPHA = lora_config.get("alpha", 8)
+LORA_SCALE = lora_config.get("scale", 16.0)
+LORA_DROPOUT = lora_config.get("dropout", 0.1)
 
 # Output directory
-OUTPUT_DIR = "models/jason_fung_mlx"
+OUTPUT_DIR = training_config.get("output_dir", "models/jason_fung_mlx-run3")
 
 
 def check_mlx_installed():
@@ -173,43 +190,44 @@ def main():
     parser.add_argument(
         "--lora",
         action="store_true",
-        help="Use LoRA (Low-Rank Adaptation) for efficient fine-tuning",
+        help=f"Use LoRA (Low-Rank Adaptation) for efficient fine-tuning (default from config: {LORA_ENABLED})",
     )
     parser.add_argument(
         "--lora-layers",
         type=int,
-        default=12,  # Reduced from 16 to preserve more base model layers
-        help="Number of LoRA layers (default: 12)",
+        default=LORA_LAYERS,
+        help=f"Number of LoRA layers (default: {LORA_LAYERS} from config)",
     )
     parser.add_argument(
         "--lora-rank",
         type=int,
-        default=6,  # Balanced: lower than 8 to reduce forgetting, higher than 4 for style learning
-        help="LoRA rank (default: 6)",
+        default=LORA_RANK,
+        help=f"LoRA rank (default: {LORA_RANK} from config)",
     )
     parser.add_argument(
         "--lora-alpha",
         type=int,
-        default=8,  # Reduced from 16 to mitigate catastrophic forgetting
-        help="LoRA alpha (default: 8)",
+        default=LORA_ALPHA,
+        help=f"LoRA alpha (default: {LORA_ALPHA} from config)",
     )
     parser.add_argument(
         "--lora-scale",
         type=float,
-        default=16.0,
-        help="LoRA scale (default: 16.0)",
+        default=LORA_SCALE,
+        help=f"LoRA scale (default: {LORA_SCALE} from config)",
     )
     parser.add_argument(
         "--lora-dropout",
         type=float,
-        default=0.1,  # Increased from 0.05 for better regularization
-        help="LoRA dropout (default: 0.1)",
+        default=LORA_DROPOUT,
+        help=f"LoRA dropout (default: {LORA_DROPOUT} from config)",
     )
+    default_grad_checkpoint = training_config.get("grad_checkpoint", True)
     parser.add_argument(
         "--grad-checkpoint",
         action="store_true",
-        default=True,
-        help="Use gradient checkpointing to save memory (default: True)",
+        default=default_grad_checkpoint,
+        help=f"Use gradient checkpointing to save memory (default: {default_grad_checkpoint} from config)",
     )
     parser.add_argument(
         "--no-grad-checkpoint",
@@ -239,13 +257,13 @@ def main():
         "--steps-per-eval",
         type=int,
         default=EVAL_STEPS,
-        help=f"Run validation every N steps (default: {EVAL_STEPS})",
+        help=f"Run validation every N steps (default: {EVAL_STEPS} from config)",
     )
     parser.add_argument(
         "--steps-per-report",
         type=int,
-        default=EVAL_STEPS,
-        help=f"Report training progress every N steps (default: {EVAL_STEPS})",
+        default=training_config.get("steps_per_report", EVAL_STEPS),
+        help=f"Report training progress every N steps (default: {training_config.get('steps_per_report', EVAL_STEPS)} from config)",
     )
     parser.add_argument(
         "--save-every",
@@ -307,8 +325,10 @@ def main():
     print(f"Epochs: {args.epochs}")
     print(f"Max sequence length: {args.max_seq_length}")
     print(f"Output directory: {args.output_dir}")
-    print(f"LoRA: {args.lora}")
-    if args.lora:
+    # Use config default for LoRA if not explicitly set
+    use_lora = args.lora if args.lora else LORA_ENABLED
+    print(f"LoRA: {use_lora} (from {'command line' if args.lora else 'config'})")
+    if use_lora:
         print(f"  LoRA layers: {args.lora_layers}")
         print(f"  LoRA rank: {args.lora_rank}")
         print(f"  LoRA alpha: {args.lora_alpha}")

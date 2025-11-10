@@ -10,15 +10,14 @@ import os
 import sys
 import argparse
 import subprocess
-import json
 from pathlib import Path
 
 # ─────────────────────────────
 # Configuration
 # ─────────────────────────────
-DEFAULT_ADAPTER_PATH = "models/jason_fung_mlx"
-DEFAULT_BASE_MODEL = "mlx-community/Llama-3.2-3B-Instruct"  # Match the model used for training
-DEFAULT_OUTPUT_DIR = "models/jason_fung_mlx_fused"
+DEFAULT_ADAPTER_PATH = "models/granite-4.0-h-tiny-run1"
+DEFAULT_BASE_MODEL = "lmstudio-community/granite-4.0-h-tiny-MLX-4bit"  # Match the model used for training
+DEFAULT_OUTPUT_DIR = "models/granite-4.0-h-tiny-run1-fused"
 
 
 def check_mlx_installed():
@@ -122,32 +121,6 @@ def fuse_lora_adapters(
 
     try:
         result = subprocess.run(cmd, check=True)
-
-        # Post-process: Remove quantization config if dequantized
-        # MLX fuse doesn't automatically clean up config.json when dequantizing
-        if dequantize:
-            config_path = output_path / "config.json"
-            if config_path.exists():
-                try:
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                    
-                    # Remove quantization-related fields if they exist
-                    removed_fields = []
-                    if 'quantization_config' in config:
-                        del config['quantization_config']
-                        removed_fields.append('quantization_config')
-                    if 'quantization' in config:
-                        del config['quantization']
-                        removed_fields.append('quantization')
-                    
-                    if removed_fields:
-                        with open(config_path, 'w') as f:
-                            json.dump(config, f, indent=4)
-                        print(f"  ✓ Cleaned up config.json: removed {', '.join(removed_fields)}")
-                except Exception as e:
-                    print(f"  ⚠ Warning: Could not clean up config.json: {e}")
-                    print(f"     You may need to manually remove quantization_config from the config")
 
         print(f"\n{'='*80}")
         print("Fusion Complete!")

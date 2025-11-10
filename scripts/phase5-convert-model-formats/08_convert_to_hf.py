@@ -5,6 +5,13 @@ Step 08 – Export to Hugging Face
 Transforms the fused MLX model (`models/jason_fung_mlx_fused`) into a Hugging Face-
 compatible directory (`models/jason_fung_mlx_hf`), including config, tokenizer, and
 properly transposed safetensors for downstream conversions.
+
+NOTE: If you're on Apple Silicon Mac and using LM Studio, you can use the MLX model
+directly without conversion! See docs/LM_STUDIO_MLX_GUIDE.md for exact steps.
+This conversion is only needed for:
+- Cross-platform compatibility (Windows/Linux)
+- Converting to GGUF format
+- Uploading to HuggingFace Hub
 """
 
 import os

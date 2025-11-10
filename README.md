@@ -82,7 +82,7 @@ python3 scripts/phase2-refine-raw-data/03_generate_answers.py
 python3 scripts/phase3-prepare-data-mlx/04_convert_answers_to_mlx.py
 python3 scripts/phase3-prepare-data-mlx/05_split_train_val.py
 
-# Phase 4: Train model
+# Phase 4: Train model (see Quick Commands below for alternative methods)
 python3 scripts/phase4-fine-tune-model/06_train_mlx.py --model mlx-community/Llama-3.2-3B-Instruct --lora
 
 # Phase 5: Export to other formats
@@ -91,12 +91,80 @@ python3 scripts/phase5-convert-model-formats/08_convert_to_hf.py
 python3 scripts/phase5-convert-model-formats/09_convert_to_gguf.py
 ```
 
+## Quick Commands
+
+The pipeline supports two methods for training. Both produce identical results.
+
+### Method 1: Python Wrapper Scripts (Beginner-Friendly)
+
+Best for first-time users and automated workflows. Includes error checking and auto-calculation.
+
+```bash
+# Training
+python3 scripts/phase4-fine-tune-model/06_train_mlx.py \
+  --model mlx-community/Llama-3.2-3B-Instruct \
+  --lora
+
+# Fusion
+python3 scripts/phase4-fine-tune-model/07_fuse_lora.py
+
+# Evaluation
+python3 scripts/phase4-fine-tune-model/06b_evaluate_model.py \
+  --model models/jason_fung_mlx_fused \
+  --compare-ground-truth
+```
+
+### Method 2: Direct MLX CLI (Advanced)
+
+Best for experimenting and learning MLX. More direct visibility, easier parameter tweaking.
+
+```bash
+# Training (using config file - recommended)
+python -m mlx_lm lora --config config/mlx_training.yaml
+
+# OR Training (with explicit CLI arguments)
+python -m mlx_lm lora \
+  --model mlx-community/Llama-3.2-3B-Instruct \
+  --train \
+  --data data/mlx_training_data \
+  --fine-tune-type lora \
+  --learning-rate 1e-5 \
+  --batch-size 1 \
+  --iters 2734 \
+  --max-seq-length 1024 \
+  --num-layers 12 \
+  --grad-accumulation-steps 8 \
+  --grad-checkpoint \
+  --steps-per-eval 50 \
+  --steps-per-report 50 \
+  --save-every 500 \
+  --adapter-path models/jason_fung_mlx
+
+# Fusion
+python -m mlx_lm fuse \
+  --model mlx-community/Llama-3.2-3B-Instruct \
+  --adapter-path models/jason_fung_mlx \
+  --save-path models/jason_fung_mlx_fused \
+  --de-quantize
+
+# Evaluation (same as Method 1 - custom metrics)
+python3 scripts/phase4-fine-tune-model/06b_evaluate_model.py \
+  --model models/jason_fung_mlx_fused \
+  --compare-ground-truth
+```
+
+**When to use each:**
+- **Use wrapper scripts** for: First runs, full pipeline automation, built-in validation
+- **Use direct CLI** for: Experimenting with hyperparameters, learning MLX, quick iterations
+
+See `CLAUDE.md` for detailed comparison and configuration details.
+
 ### Testing the Model
 
 ```bash
 # Test with MLX
-python -m mlx_lm.generate \
-  --model models/jason_fung_mlx \
+python -m mlx_lm generate \
+  --model models/jason_fung_mlx_fused \
   --prompt "What is insulin resistance?"
 ```
 

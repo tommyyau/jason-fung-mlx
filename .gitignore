@@ -61,6 +61,14 @@ train_command.sh
 training_output.log
 *.png
 *.jpg
+adapters/
+
+# Evaluation and comparison results (generated artifacts)
+evaluation_results*.json
+comparison_results*.json
+comparison_results*.md
+quick_test.json
+fix_*.py
 
 # Temporary files
 *.tmp

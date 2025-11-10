@@ -80,7 +80,7 @@ python -m mlx_lm.generate \
 
 The training setup is optimized for 16GB RAM Apple Silicon Macs:
 
-**Model**: `mlx-community/Llama-3.2-3B-Instruct` (3B parameters, Granite-4.0-H-Micro architecture)
+**Model**: `mlx-community/Llama-3.2-3B-Instruct` (3B parameters, Llama 3.2 architecture)
 **Training Method**: LoRA (Low-Rank Adaptation) - only 0.216% of parameters are trainable
 **Memory Optimizations**:
 - Batch size: 1 (with gradient accumulation of 8 = effective batch size of 8)
@@ -174,9 +174,10 @@ After training completes, the following artifacts are produced:
   - Can be uploaded to HuggingFace Hub
 
 - `models/*.gguf` - GGUF format files
-  - `jason-fung-granite-F16.gguf` - Full precision (6.4GB)
-  - `jason-fung-granite-Q4_K_M.gguf` - Quantized (2GB)
+  - `jason-fung-llama-F16.gguf` - Full precision (6.4GB)
+  - `jason-fung-llama-Q4_K_M.gguf` - Quantized (2GB)
   - Compatible with llama.cpp, LM Studio, and other inference engines
+  - Note: Naming may show "granite" from earlier testing, but contains Llama 3.2 3B weights
 
 ## Environment Variables
 
@@ -205,9 +206,12 @@ The scripts search for `.env` in multiple locations:
 
 6. **Don't train without validation data** - The 80/20 train/val split is intentional.
 
+7. **Don't use incompatible models** - Granite fails GGUF conversion, Gemma 2 9B exceeds 16GB RAM. See `docs/MLX_MODEL_COMPATIBILITY.md`.
+
 ## Key Documentation
 
 - `docs/TRAINING_GUIDE.md` - Complete MLX training guide with all parameters
+- `docs/MLX_MODEL_COMPATIBILITY.md` - **Model compatibility guide** (why Granite and Gemma don't work)
 - `docs/DATA_REFINEMENT_JOURNEY.md` - Evolution of the data pipeline (10 lessons learned)
 - `docs/FINE_TUNING_SAGA.md` - Training challenges and solutions
 - `docs/MISSING_LESSONS.md` - What guides don't tell you about fine-tuning

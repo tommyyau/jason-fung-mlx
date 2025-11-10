@@ -510,8 +510,11 @@ There was something wrong with the model shape or size. The conversion process f
 - Model seemed to work
 - But couldn't convert it to GGUF
 - Shape/size incompatibility issues
-- Multiple attempts to fix it (see `GRANITE_GGUF_GUIDE.md` and conversion scripts)
+- Multiple attempts to fix it
 - Nothing worked
+
+**Technical Analysis:**
+Granite uses a non-standard architecture (Multi-head Latent Attention) that creates weight shape mismatches during GGUF conversion. The llama.cpp converter expects standard Transformer format and cannot handle Granite's extra tensor dimensions. See `docs/MLX_MODEL_COMPATIBILITY.md` for detailed technical analysis.
 
 **The Realization:**
 Sometimes a model can work great for training, but if you can't use it in your workflow (LM Studio), it's useless. Compatibility matters as much as capability.

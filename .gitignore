@@ -56,6 +56,10 @@ data/raw/
 !data/.gitkeep
 !models/.gitkeep
 
+# Allow training data files for analysis
+!data/mlx_training_data/train.jsonl
+!data/mlx_training_data/valid.jsonl
+
 # Training outputs
 train_command.sh
 training_output.log

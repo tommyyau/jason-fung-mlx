@@ -245,7 +245,7 @@ except ImportError:
 **What you do now**:
 ```bash
 # Manual testing (tedious, not reproducible)
-python -m mlx_lm.generate --model models/jason_fung_mlx --prompt "What is insulin resistance?"
+python -m mlx_lm generate --model models/jason_fung_mlx --prompt "What is insulin resistance?"
 # Read output, subjectively judge quality
 # No metrics, no comparison
 ```

@@ -211,7 +211,7 @@ From the actual training run:
 After training, test your model:
 
 ```bash
-python -m mlx_lm.generate \
+python -m mlx_lm generate \
   --model models/jason_fung_mlx \
   --prompt "What is insulin resistance?"
 ```

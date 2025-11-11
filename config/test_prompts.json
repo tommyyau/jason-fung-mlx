@@ -1,0 +1,439 @@
+{
+  "_description": "Categorized test prompts for catastrophic forgetting detection and model comparison",
+  "_usage": "Use with scripts/compare_models.py or mlx_lm.generate for quick testing",
+  "_categories": {
+    "simple_factual": "Short questions expecting concise answers (~20-50 words). Tests if model can be brief when appropriate.",
+    "medium_complexity": "Moderate questions expecting balanced detail (~100-200 words). Tests appropriate response depth.",
+    "complex_explanatory": "Detailed questions expecting comprehensive answers (~300-500+ words). Tests if model can provide thorough explanations.",
+    "general_knowledge": "Non-medical questions testing retention of base model knowledge. Catastrophic forgetting detection.",
+    "edge_cases": "Unusual requests testing instruction following and constraint handling.",
+    "domain_specific": "Jason Fung medical education topics. Tests if fine-tuning improved domain responses."
+  },
+
+  "test_prompts": {
+    "simple_factual": [
+      {
+        "prompt": "What is 2+2?",
+        "expected_answer": "4 (or 'Four')",
+        "expected_length": "very_short",
+        "expected_words": "5-10",
+        "purpose": "Test if model can give extremely brief answers",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Should be one sentence. Base and fine-tuned should be similar length."
+      },
+      {
+        "prompt": "What is the capital of France?",
+        "expected_answer": "Paris",
+        "expected_length": "very_short",
+        "expected_words": "5-10",
+        "purpose": "Test basic factual recall with minimal elaboration",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Should just say 'Paris' with minimal context. Not a medical topic so fine-tuned shouldn't over-elaborate."
+      },
+      {
+        "prompt": "Define insulin",
+        "expected_answer": "A hormone produced by the pancreas that regulates blood sugar (glucose) levels by allowing cells to take in glucose from the bloodstream",
+        "expected_length": "short",
+        "expected_words": "20-50",
+        "purpose": "Test brief definition without full explanation",
+        "suggested_params": "--max-tokens 100 --temp 0.5",
+        "what_to_check": "Should be 1-2 sentences. Fine-tuned may add slight medical context but shouldn't write an essay."
+      },
+      {
+        "prompt": "What does DNA stand for?",
+        "expected_answer": "Deoxyribonucleic acid",
+        "expected_length": "very_short",
+        "expected_words": "5-15",
+        "purpose": "Test acronym recall",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Should just provide the full name. Models should be comparable."
+      },
+      {
+        "prompt": "True or false: Water boils at 100°C",
+        "expected_answer": "True (at sea level/standard atmospheric pressure)",
+        "expected_length": "very_short",
+        "expected_words": "1-10",
+        "purpose": "Test yes/no response brevity",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Should say 'True' or 'True (at sea level)'. Should not elaborate unless asked."
+      }
+    ],
+
+    "medium_complexity": [
+      {
+        "prompt": "How does insulin work?",
+        "expected_length": "medium",
+        "expected_words": "100-200",
+        "purpose": "Test balanced explanation without over-explaining",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should have better structure and formatting (bold, lists) but similar length to base."
+      },
+      {
+        "prompt": "What is intermittent fasting?",
+        "expected_length": "medium",
+        "expected_words": "100-200",
+        "purpose": "Test core domain topic with moderate detail",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should show Jason Fung style (clear structure, practical focus) vs base model."
+      },
+      {
+        "prompt": "What causes type 2 diabetes?",
+        "expected_length": "medium",
+        "expected_words": "150-250",
+        "purpose": "Test medical explanation with appropriate depth",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned may emphasize insulin resistance and hormonal factors (Jason Fung perspective)."
+      },
+      {
+        "prompt": "Explain autophagy",
+        "expected_length": "medium",
+        "expected_words": "100-200",
+        "purpose": "Test biological process explanation",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should provide clearer, more accessible explanation with better formatting."
+      },
+      {
+        "prompt": "What is the ketogenic diet?",
+        "expected_length": "medium",
+        "expected_words": "100-200",
+        "purpose": "Test nutrition topic explanation",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned may connect to fasting and metabolic health (Jason Fung's teaching approach)."
+      },
+      {
+        "prompt": "What is insulin resistance?",
+        "expected_length": "medium",
+        "expected_words": "150-250",
+        "purpose": "Core Jason Fung concept - test domain expertise",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should show significant improvement in clarity, structure, and teaching approach."
+      }
+    ],
+
+    "complex_explanatory": [
+      {
+        "prompt": "Explain the complete mechanism of autophagy and its relationship to fasting",
+        "expected_length": "long",
+        "expected_words": "300-500",
+        "purpose": "Test detailed, multi-faceted explanation",
+        "suggested_params": "--max-tokens 1000 --temp 0.7",
+        "what_to_check": "Fine-tuned should provide well-structured, comprehensive explanation with clear sections and formatting."
+      },
+      {
+        "prompt": "Describe the hormonal changes during extended fasting",
+        "expected_length": "long",
+        "expected_words": "300-500",
+        "purpose": "Test complex physiological process explanation",
+        "suggested_params": "--max-tokens 1000 --temp 0.7",
+        "what_to_check": "Fine-tuned should organize by hormone type or time phase with clear structure."
+      },
+      {
+        "prompt": "What is the two-compartment problem in obesity and how does it explain weight loss resistance?",
+        "expected_length": "long",
+        "expected_words": "300-500",
+        "purpose": "Test Jason Fung's specific conceptual framework",
+        "suggested_params": "--max-tokens 1000 --temp 0.7",
+        "what_to_check": "Fine-tuned should explain this concept clearly (likely not in base model training)."
+      },
+      {
+        "prompt": "Explain the difference between fasting and caloric restriction in detail",
+        "expected_length": "long",
+        "expected_words": "300-500",
+        "purpose": "Test nuanced comparison and detailed explanation",
+        "suggested_params": "--max-tokens 1000 --temp 0.7",
+        "what_to_check": "Fine-tuned should emphasize hormonal differences (Jason Fung perspective) vs just energy balance."
+      },
+      {
+        "prompt": "How do different types of intermittent fasting protocols work, and what are their specific benefits?",
+        "expected_length": "long",
+        "expected_words": "400-600",
+        "purpose": "Test comprehensive overview with multiple subtopics",
+        "suggested_params": "--max-tokens 1024 --temp 0.7",
+        "what_to_check": "Fine-tuned should organize by protocol type (16:8, 24hr, 5:2, etc.) with clear sections."
+      }
+    ],
+
+    "general_knowledge": [
+      {
+        "prompt": "Who wrote Romeo and Juliet?",
+        "expected_answer": "William Shakespeare",
+        "expected_length": "very_short",
+        "expected_words": "5-10",
+        "purpose": "Test basic literature knowledge (catastrophic forgetting check)",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Both models should correctly answer 'William Shakespeare'. No medical context should be added."
+      },
+      {
+        "prompt": "What is the Pythagorean theorem?",
+        "expected_answer": "a² + b² = c² (In a right triangle, the square of the hypotenuse equals the sum of the squares of the other two sides)",
+        "expected_length": "short",
+        "expected_words": "20-50",
+        "purpose": "Test mathematics knowledge retention",
+        "suggested_params": "--max-tokens 100 --temp 0.3",
+        "what_to_check": "Both models should correctly state a² + b² = c². Fine-tuned shouldn't lose this knowledge."
+      },
+      {
+        "prompt": "What is photosynthesis?",
+        "expected_answer": "The process by which plants use sunlight, water, and carbon dioxide to produce oxygen and glucose (sugar) for energy",
+        "expected_length": "short",
+        "expected_words": "50-100",
+        "purpose": "Test biology knowledge outside medical domain",
+        "suggested_params": "--max-tokens 200 --temp 0.5",
+        "what_to_check": "Both models should explain plant energy production. Fine-tuned shouldn't inappropriately relate to human metabolism."
+      },
+      {
+        "prompt": "What is the largest ocean on Earth?",
+        "expected_answer": "The Pacific Ocean",
+        "expected_length": "very_short",
+        "expected_words": "5-10",
+        "purpose": "Test geography knowledge retention",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Both should answer 'Pacific Ocean'. Simple factual recall test."
+      },
+      {
+        "prompt": "Explain gravity",
+        "expected_answer": "Gravity is the force of attraction between objects with mass. It pulls objects toward each other and keeps planets in orbit around the sun and objects on Earth's surface",
+        "expected_length": "medium",
+        "expected_words": "100-150",
+        "purpose": "Test physics knowledge retention",
+        "suggested_params": "--max-tokens 300 --temp 0.5",
+        "what_to_check": "Fine-tuned should maintain base model's physics knowledge. No medical connection needed."
+      },
+      {
+        "prompt": "Write a Python function to reverse a string",
+        "expected_answer": "def reverse_string(s): return s[::-1] (or using reversed() function or a loop)",
+        "expected_length": "short",
+        "expected_words": "30-80",
+        "purpose": "Test programming knowledge (if base model had this capability)",
+        "suggested_params": "--max-tokens 200 --temp 0.5",
+        "what_to_check": "If base model could code, fine-tuned should retain this. Check for catastrophic forgetting of non-medical skills."
+      },
+      {
+        "prompt": "What are the primary colors?",
+        "expected_answer": "Red, blue, and yellow (for pigments/subtractive color) OR Red, green, and blue (for light/additive color)",
+        "expected_length": "very_short",
+        "expected_words": "5-15",
+        "purpose": "Test basic art/science knowledge",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Both should answer red, blue, yellow (or red, green, blue for light). Very basic knowledge test."
+      },
+      {
+        "prompt": "Who was the first person to walk on the moon?",
+        "expected_answer": "Neil Armstrong",
+        "expected_length": "very_short",
+        "expected_words": "5-15",
+        "purpose": "Test history knowledge retention",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Both should answer 'Neil Armstrong'. No elaboration needed."
+      }
+    ],
+
+    "edge_cases": [
+      {
+        "prompt": "Answer in exactly 5 words: What is fasting?",
+        "expected_length": "very_short",
+        "expected_words": "5",
+        "purpose": "Test instruction following with strict constraints",
+        "suggested_params": "--max-tokens 50 --temp 0.3",
+        "what_to_check": "Should provide exactly 5 words. Tests if model can follow precise constraints."
+      },
+      {
+        "prompt": "List exactly 3 benefits of fasting",
+        "expected_length": "short",
+        "expected_words": "30-60",
+        "purpose": "Test numbered list generation with constraint",
+        "suggested_params": "--max-tokens 150 --temp 0.5",
+        "what_to_check": "Should provide exactly 3 items in a list. Fine-tuned may use better formatting."
+      },
+      {
+        "prompt": "True or false: Fasting causes muscle loss",
+        "expected_length": "short",
+        "expected_words": "10-50",
+        "purpose": "Test yes/no question with potential for elaboration",
+        "suggested_params": "--max-tokens 100 --temp 0.5",
+        "what_to_check": "Should start with True or False, may add brief explanation. Fine-tuned may provide Jason Fung's perspective."
+      },
+      {
+        "prompt": "What is insulin resistance? Keep it under 30 words.",
+        "expected_length": "short",
+        "expected_words": "25-30",
+        "purpose": "Test length constraint following",
+        "suggested_params": "--max-tokens 100 --temp 0.5",
+        "what_to_check": "Should stay under 30 words. Tests if model respects explicit length constraints."
+      },
+      {
+        "prompt": "Explain fasting to a 5-year-old",
+        "expected_length": "short",
+        "expected_words": "50-100",
+        "purpose": "Test style adaptation (simplified language)",
+        "suggested_params": "--max-tokens 200 --temp 0.7",
+        "what_to_check": "Should use simple language and analogies. Tests if model can adapt communication style."
+      },
+      {
+        "prompt": "What is NOT a benefit of fasting?",
+        "expected_length": "short",
+        "expected_words": "30-80",
+        "purpose": "Test handling of negation/inverse questions",
+        "suggested_params": "--max-tokens 150 --temp 0.5",
+        "what_to_check": "Should identify misconceptions or non-benefits. Tests understanding of question structure."
+      }
+    ],
+
+    "domain_specific": [
+      {
+        "prompt": "What is insulin resistance?",
+        "expected_length": "medium",
+        "expected_words": "150-250",
+        "purpose": "Core Jason Fung concept - primary test case",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should show significant improvement in clarity, structure, and teaching style."
+      },
+      {
+        "prompt": "Explain the hormonal obesity theory",
+        "expected_length": "long",
+        "expected_words": "300-500",
+        "purpose": "Jason Fung's central thesis",
+        "suggested_params": "--max-tokens 1000 --temp 0.7",
+        "what_to_check": "Fine-tuned should explain this clearly (may not be in base model knowledge)."
+      },
+      {
+        "prompt": "What is the two-compartment problem?",
+        "expected_length": "medium",
+        "expected_words": "200-300",
+        "purpose": "Specific Jason Fung concept/model",
+        "suggested_params": "--max-tokens 600 --temp 0.7",
+        "what_to_check": "Fine-tuned should explain clearly. Base model may not know this concept."
+      },
+      {
+        "prompt": "How does fasting affect insulin levels?",
+        "expected_length": "medium",
+        "expected_words": "150-250",
+        "purpose": "Core physiological mechanism in Jason Fung's teaching",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should provide clear, accessible explanation with practical context."
+      },
+      {
+        "prompt": "What are the different types of intermittent fasting?",
+        "expected_length": "medium",
+        "expected_words": "200-300",
+        "purpose": "Practical application knowledge",
+        "suggested_params": "--max-tokens 600 --temp 0.7",
+        "what_to_check": "Fine-tuned should organize clearly (16:8, 24hr, 5:2, etc.) with brief explanations."
+      },
+      {
+        "prompt": "Why is breakfast not the most important meal of the day?",
+        "expected_length": "medium",
+        "expected_words": "150-250",
+        "purpose": "Jason Fung's perspective on common nutrition myth",
+        "suggested_params": "--max-tokens 512 --temp 0.7",
+        "what_to_check": "Fine-tuned should challenge conventional wisdom using Jason Fung's reasoning."
+      },
+      {
+        "prompt": "What is the relationship between fasting and autophagy?",
+        "expected_length": "medium",
+        "expected_words": "200-300",
+        "purpose": "Connection between two key concepts",
+        "suggested_params": "--max-tokens 600 --temp 0.7",
+        "what_to_check": "Fine-tuned should explain both concepts and their relationship clearly."
+      },
+      {
+        "prompt": "How does caloric restriction differ from fasting?",
+        "expected_length": "medium",
+        "expected_words": "200-300",
+        "purpose": "Important distinction in Jason Fung's teaching",
+        "suggested_params": "--max-tokens 600 --temp 0.7",
+        "what_to_check": "Fine-tuned should emphasize hormonal differences (insulin response) vs just calorie counting."
+      }
+    ]
+  },
+
+  "suggested_test_sequences": {
+    "quick_catastrophic_forgetting_check": {
+      "description": "5-minute check for major catastrophic forgetting issues",
+      "prompts": [
+        "What is 2+2?",
+        "Who wrote Romeo and Juliet?",
+        "Define insulin",
+        "What is insulin resistance?",
+        "Explain autophagy"
+      ],
+      "what_to_check": "Verify model can handle varied complexity and non-domain knowledge"
+    },
+
+    "response_length_variety_test": {
+      "description": "Check if model adapts response length appropriately",
+      "prompts": [
+        {"prompt": "What is 2+2?", "params": "--max-tokens 500"},
+        {"prompt": "How does insulin work?", "params": "--max-tokens 500"},
+        {"prompt": "Explain the complete mechanism of autophagy and its relationship to fasting", "params": "--max-tokens 1000"}
+      ],
+      "what_to_check": "Simple question should still get short answer despite high max-tokens. Complex question should use available tokens."
+    },
+
+    "domain_enhancement_test": {
+      "description": "Verify fine-tuning improved domain-specific responses",
+      "prompts": [
+        "What is insulin resistance?",
+        "Explain the hormonal obesity theory",
+        "What is the two-compartment problem?",
+        "How does fasting affect insulin levels?"
+      ],
+      "what_to_check": "Fine-tuned should show better structure, formatting, and Jason Fung's teaching style"
+    },
+
+    "general_knowledge_retention_test": {
+      "description": "Verify model retained non-domain knowledge",
+      "prompts": [
+        "Who wrote Romeo and Juliet?",
+        "What is the Pythagorean theorem?",
+        "What is photosynthesis?",
+        "What is the largest ocean on Earth?"
+      ],
+      "what_to_check": "Fine-tuned should answer these correctly without inappropriate medical context"
+    },
+
+    "comprehensive_evaluation": {
+      "description": "Full test covering all categories (15-20 minutes)",
+      "prompts": [
+        "What is 2+2?",
+        "What is the capital of France?",
+        "Who wrote Romeo and Juliet?",
+        "What is the Pythagorean theorem?",
+        "Define insulin",
+        "How does insulin work?",
+        "What is intermittent fasting?",
+        "What is insulin resistance?",
+        "Explain autophagy",
+        "Explain the complete mechanism of autophagy and its relationship to fasting",
+        "Describe the hormonal changes during extended fasting",
+        "What is the two-compartment problem in obesity?",
+        "Answer in exactly 5 words: What is fasting?",
+        "List exactly 3 benefits of fasting",
+        "True or false: Fasting causes muscle loss"
+      ],
+      "what_to_check": "Comprehensive check of brevity, detail, general knowledge, domain expertise, and instruction following"
+    }
+  },
+
+  "usage_examples": {
+    "compare_models_script": {
+      "description": "Use compare_models.py with prompts from this file",
+      "examples": [
+        "python scripts/compare_models.py \"What is 2+2?\"",
+        "python scripts/compare_models.py \"What is insulin resistance?\" --max-tokens 512",
+        "python scripts/compare_models.py \"Explain autophagy\" --temp 0.7 --max-tokens 1000"
+      ]
+    },
+    "direct_mlx_cli": {
+      "description": "Use prompts directly with mlx_lm.generate",
+      "examples": [
+        "python -m mlx_lm generate --model models/jason_fung_mlx_fused --prompt \"What is insulin resistance?\"",
+        "python -m mlx_lm generate --model mlx-community/Llama-3.2-3B-Instruct --prompt \"Who wrote Romeo and Juliet?\" --max-tokens 50"
+      ]
+    },
+    "batch_testing": {
+      "description": "Test multiple prompts from a category",
+      "bash_example": "for prompt in \"What is 2+2?\" \"Who wrote Romeo and Juliet?\" \"Define insulin\"; do python scripts/compare_models.py \"$prompt\"; done"
+    }
+  }
+}

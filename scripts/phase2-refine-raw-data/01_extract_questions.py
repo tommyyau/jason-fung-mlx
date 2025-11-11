@@ -39,14 +39,23 @@ else:
     if os.getenv("OPENAI_API_KEY"):
         print("✓ Loaded .env file from default location")
 
+# Load configuration
+script_dir = Path(__file__).parent
+project_root = script_dir.parent.parent
+sys.path.insert(0, str(project_root / "config"))
+from load_config import load_config, get_question_config
+
 # ─────────────────────────────
-# Config
+# Config (loaded from training_config.yaml)
 # ─────────────────────────────
+config = load_config()
+question_config = get_question_config()
+
 INPUT_FILE = "data/transcripts/transcripts.jsonl"
 OUTPUT_FILE = "data/generated_questions.json"
-MODEL_LLM = "gpt-5-mini"
-MAX_CONCURRENT = 20  # Number of parallel workers
-DEFAULT_TEST_VIDEOS = 5  # Process first 5 videos by default
+MODEL_LLM = question_config.get("model", "gpt-5-mini")
+MAX_CONCURRENT = question_config.get("max_concurrent", 20)  # Number of parallel workers
+DEFAULT_TEST_VIDEOS = question_config.get("default_test_videos", 5)  # Process first 5 videos by default
 
 # Initialize OpenAI client
 api_key = os.getenv("OPENAI_API_KEY")

@@ -1,0 +1,62 @@
+# Unified Configuration for Jason Fung MLX Fine-Tuning Pipeline
+# This file centralizes all configuration parameters used across the pipeline
+
+# Data processing configuration
+data:
+  train_split: 0.8
+  val_split: 0.2
+  random_seed: 42
+  
+  # File paths (relative to project root)
+  input_file: "data/generated_answers_mlx.jsonl"
+  train_file: "data/generated_answers_mlx_train.jsonl"
+  val_file: "data/generated_answers_mlx_validate.jsonl"
+  transcripts_file: "data/transcripts/transcripts.jsonl"
+  questions_file: "data/generated_questions.json"
+  answers_file: "data/generated_answers.jsonl"
+
+# Question generation configuration
+question_generation:
+  max_concurrent: 20  # Number of parallel workers
+  default_test_videos: 5  # Process first N videos in test mode
+  model: "gpt-5-mini"  # OpenAI model for question generation
+  temperature: 0.7  # Generation temperature
+
+# Answer generation configuration
+answer_generation:
+  max_concurrent: 20  # Number of parallel workers
+  model: "gpt-5-mini"  # OpenAI model for answer generation
+  temperature: 0.7  # Generation temperature
+
+# Training configuration
+training:
+  # Base model
+  model: "mlx-community/Llama-3.2-3B-Instruct"
+  
+  # Hyperparameters (optimized for 16GB RAM Apple Silicon)
+  learning_rate: 1e-5  # Reduced from 1e-5 to 5e-6 mitigate catastrophic forgetting
+  batch_size: 1  # Reduced from 4 to save memory
+  epochs: 2  # Reduced from 3 to mitigate catastrophic forgetting
+  max_seq_length: 1024  # Increased to prevent truncation of longer answers
+  gradient_accumulation_steps: 8  # Increased for more stable gradients
+  
+  # LoRA configuration
+  lora:
+    enabled: true
+    layers: 12  # Reduced from 16 to preserve more base model layers
+    rank: 6  # Balanced: lower than 8 to reduce forgetting, higher than 4 for style learning
+    alpha: 8  # Reduced from 16 to mitigate catastrophic forgetting
+    scale: 16.0
+    dropout: 0.1  # Increased from 0.05 for better regularization
+  
+  # Training monitoring
+  steps_per_eval: 50  # Run validation every N steps
+  steps_per_report: 50  # Report training progress every N steps
+  save_every: 500  # Save LoRA adapters every N steps
+  
+  # Memory optimizations
+  grad_checkpoint: true  # Use gradient checkpointing to save memory
+  
+  # Output directory
+  output_dir: "models/jason_fung_mlx"
+

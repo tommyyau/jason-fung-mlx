@@ -13,20 +13,25 @@ import sys
 from pathlib import Path
 from typing import List, Dict
 
-# ─────────────────────────────
-# Config
-# ─────────────────────────────
-INPUT_FILE = "data/generated_answers_mlx.jsonl"
-TRAIN_FILE = "data/generated_answers_mlx_train.jsonl"
-VAL_FILE = "data/generated_answers_mlx_validate.jsonl"
-
-TRAIN_SPLIT = 0.8  # 80% for training
-VAL_SPLIT = 0.2    # 20% for validation
-SEED = 42          # For reproducibility
-
-# Get project root
+# Load configuration
 script_dir = Path(__file__).parent
 project_root = script_dir.parent.parent
+sys.path.insert(0, str(project_root / "config"))
+from load_config import load_config, get_data_config
+
+# ─────────────────────────────
+# Config (loaded from training_config.yaml)
+# ─────────────────────────────
+config = load_config()
+data_config = get_data_config()
+
+INPUT_FILE = data_config.get("input_file", "data/generated_answers_mlx.jsonl")
+TRAIN_FILE = data_config.get("train_file", "data/generated_answers_mlx_train.jsonl")
+VAL_FILE = data_config.get("val_file", "data/generated_answers_mlx_validate.jsonl")
+
+TRAIN_SPLIT = data_config.get("train_split", 0.8)  # 80% for training
+VAL_SPLIT = data_config.get("val_split", 0.2)    # 20% for validation
+SEED = data_config.get("random_seed", 42)          # For reproducibility
 
 
 def load_dataset(input_path: Path) -> List[Dict]:

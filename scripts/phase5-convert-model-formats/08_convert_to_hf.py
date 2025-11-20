@@ -260,6 +260,7 @@ def main():
     )
     parser.add_argument(
         "--hf-output",
+        "--output-dir",
         type=str,
         default=DEFAULT_HF_OUTPUT,
         help=f"Output directory for HuggingFace model (default: {DEFAULT_HF_OUTPUT})",

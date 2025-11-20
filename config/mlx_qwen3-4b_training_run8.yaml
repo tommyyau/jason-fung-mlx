@@ -1,0 +1,80 @@
+# MLX Training Configuration - Run 8 (Qwen3-4B)
+# Direct CLI usage: python -m mlx_lm lora --config config/mlx_qwen3-4b_training_run8.yaml
+#
+# GOAL: Test Qwen3-4B model with Jason Fung fine-tuning
+#
+# Model: Qwen/Qwen3-4B-Instruct-2507 (4.0B parameters, 36 layers)
+# - Native context length: 32,768 tokens
+# - Instruct-tuned version (better for instruction-following fine-tuning)
+# - Supports thinking/non-thinking modes (we use non-thinking for training)
+# - Based on successful Run 7 approach: 1 epoch to prevent overfitting
+#
+# Key settings (based on Run 7 success):
+# - iters: 1600 (1 EPOCH - 1600 examples ÷ batch_size 1 = 1600 iters)
+# - Conservative LoRA settings to prevent overfitting
+# - Same regularization as Run 7
+
+# Base model
+model: Qwen/Qwen3-4B-Instruct-2507
+
+# Data directory (must contain train.jsonl and valid.jsonl)
+data: data/mlx_training_data
+# Output directory for LoRA adapters
+adapter_path: models/Qwen3-4B_run8
+
+# Enable training
+train: true
+
+# Fine-tuning method
+fine_tune_type: lora
+
+# Optimizer
+optimizer: adamw
+
+# LoRA configuration (updated for Run 8)
+num_layers: 24  # Fine-tune 24 of 36 layers (67%) - stronger adaptation
+lora_rank: 16
+lora_alpha: 16  # Matches rank for balanced adaptation
+lora_dropout: 0.1  # Regularization to prevent memorization
+
+# Training hyperparameters (optimized for 16GB RAM Apple Silicon)
+learning_rate: 1e-5  # Conservative to prevent catastrophic forgetting
+batch_size: 1  # Memory constraint
+iters: 3200  # 1 EPOCH (1600 examples ÷ 1 batch = 1600 iters)
+max_seq_length: 1024  # Match data preparation (Qwen3 supports up to 32K, but 1024 is sufficient)
+
+# Gradient handling
+grad_accumulation_steps: 16  # Effective batch size = 16 for stable gradients
+grad_checkpoint: true  # Enable gradient checkpointing to save memory
+
+# Dora configuration
+use_dora: true
+
+# Training monitoring
+steps_per_eval: 50  # Watch for overfitting closely
+steps_per_report: 50  # Frequent progress updates
+save_every: 500  # Save checkpoint every 500 steps
+
+# Reproducibility
+seed: 42
+
+# Expected training time:
+# - ~45-60 minutes on 16GB M1 MacBook Pro (Qwen3-4B is slightly larger than SmolLM3-3B)
+# - Close Cursor/IDEs before training for 50-70% speedup
+# - Monitor: Activity Monitor → Memory tab (should stay GREEN)
+#
+# What to expect:
+# - Training loss should decrease steadily
+# - Validation loss should decrease and stabilize
+# - If validation loss starts increasing before end, stop early (overfitting)
+# - Final checkpoint at 1600 iters is likely the best one
+#
+# After training:
+# - Test directly with LoRA adapters: python -m mlx_lm generate --model models/Qwen3-4B_run8 --prompt "Should I count calories or focus on insulin?" --max-tokens 300
+# - Or fuse adapters: python -m mlx_lm fuse --model Qwen/Qwen3-4B-Instruct-2507 --adapter-path models/Qwen3-4B_run8 --save-path models/Qwen3-4B_run8_fused --de-quantize
+#
+# Notes on Qwen3-4B:
+# - Model supports thinking mode, but we train in standard instruction-following mode
+# - For inference, you can enable thinking mode if needed (see Qwen3 documentation)
+# - Best practices: Temperature=0.7, TopP=0.8, TopK=20 for non-thinking mode
+

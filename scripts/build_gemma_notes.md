@@ -187,6 +187,17 @@ python -m mlx_lm generate \
   --adapter-path models/gemma-3-text-4b-it-q8-mlx \
   --prompt "What is insulin resistance?"
 
+****
+
+python -m mlx_lm generate \
+  --model mlx-community/Qwen2.5-1.5B-Instruct-4bit \
+  --adapter-path models/Qwen2.5-1.5B-Instruct-4bit \
+  --prompt "What is insulin resistance?"
+
+****
+
+
+
 python -m mlx_lm generate \  --model alexgusevski/gemma-3-text-4b-it-q8-mlx \  --adapter-path models/gemma-3-text-4b-it-q8-mlx \  --prompt "What is insulin resistance?"
 
 Compare base vs fine-tuned

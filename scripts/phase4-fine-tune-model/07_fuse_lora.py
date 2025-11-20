@@ -56,6 +56,20 @@ def find_adapter_path(adapter_path: str) -> str:
     return str(adapter_path)
 
 
+def get_directory_size(path: Path) -> float:
+    """Get total size of directory in GB."""
+    total_size = 0
+    try:
+        for dirpath, dirnames, filenames in os.walk(path):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                if os.path.exists(filepath):
+                    total_size += os.path.getsize(filepath)
+    except Exception:
+        pass
+    return total_size / (1024 ** 3)  # Convert to GB
+
+
 def fuse_lora_adapters(
     base_model: str,
     adapter_path: str,
@@ -72,6 +86,8 @@ def fuse_lora_adapters(
         adapter_path: Path to LoRA adapter directory
         output_dir: Output directory for fused model
         dequantize: Whether to dequantize the model (default: True)
+                    ⚠️  WARNING: Dequantizing converts quantized models (2GB) to 
+                    full precision (5-6GB). Use --no-dequantize to keep smaller size.
     """
     print(f"\n{'='*80}")
     print("Fusing LoRA Adapters with Base Model")
@@ -80,6 +96,12 @@ def fuse_lora_adapters(
     print(f"Adapter path: {adapter_path}")
     print(f"Output directory: {output_dir}")
     print(f"Dequantize: {dequantize}")
+    
+    if dequantize:
+        print(f"\n⚠️  SIZE WARNING: Dequantizing will convert quantized model (~2GB) to")
+        print(f"   full precision (~5-6GB). To keep smaller size, use --no-dequantize")
+    else:
+        print(f"\n✓ Keeping quantized format (smaller file size ~2GB)")
 
     # Check if adapter exists
     adapter_path_obj = Path(adapter_path)
@@ -149,12 +171,33 @@ def fuse_lora_adapters(
                     print(f"  ⚠ Warning: Could not clean up config.json: {e}")
                     print(f"     You may need to manually remove quantization_config from the config")
 
-        print(f"\n{'='*80}")
-        print("Fusion Complete!")
-        print(f"{'='*80}")
-        print(f"\n✓ Fused model saved to: {output_dir}")
+        # Report file size
+        output_path_obj = Path(output_dir)
+        if output_path_obj.exists():
+            model_size = get_directory_size(output_path_obj)
+            print(f"\n{'='*80}")
+            print("Fusion Complete!")
+            print(f"{'='*80}")
+            print(f"\n✓ Fused model saved to: {output_dir}")
+            print(f"✓ Model size: {model_size:.2f} GB")
+            
+            if dequantize and model_size > 4.0:
+                print(f"\n💡 TIP: Model is large ({model_size:.2f} GB) because it's dequantized.")
+                print(f"   To reduce size, you can:")
+                print(f"   1. Re-fuse with --no-dequantize (keeps ~2GB, works for MLX inference)")
+                print(f"   2. Convert to GGUF with quantization:")
+                print(f"      python3 scripts/phase5-convert-model-formats/08_convert_to_hf.py")
+                print(f"      python3 scripts/phase5-convert-model-formats/09_convert_to_gguf.py --quantization Q4_K_M")
+            elif not dequantize:
+                print(f"\n✓ Model kept quantized (smaller size)")
+        else:
+            print(f"\n{'='*80}")
+            print("Fusion Complete!")
+            print(f"{'='*80}")
+            print(f"\n✓ Fused model saved to: {output_dir}")
+        
         print(f"\nNext step:")
-        print(f"  Convert to HuggingFace: python3 newscripts/08_convert_to_hf.py")
+        print(f"  Convert to HuggingFace: python3 scripts/phase5-convert-model-formats/08_convert_to_hf.py")
         print(f"{'='*80}")
 
         return True
@@ -196,7 +239,8 @@ def main():
         "--no-dequantize",
         dest="dequantize",
         action="store_false",
-        help="Don't dequantize the model (keep quantized if base model is quantized)",
+        help="Don't dequantize the model (keep quantized if base model is quantized). "
+             "This keeps the model smaller (~2GB vs ~5-6GB). Works fine for MLX inference.",
     )
     parser.add_argument(
         "--export-gguf",

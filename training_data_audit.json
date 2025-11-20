@@ -1,0 +1,1117 @@
+{
+  "total_examples": 1600,
+  "category_counts": {
+    "insulin_vs_cico": 849,
+    "low_carb": 106,
+    "fasting_practice": 283,
+    "insulin_mechanism": 298,
+    "related_health": 36,
+    "uncategorized": 11,
+    "nutrition_general": 15,
+    "very_specific": 2
+  },
+  "replacement_candidates": [
+    491,
+    895,
+    175,
+    287,
+    291,
+    449,
+    487,
+    510,
+    680,
+    832,
+    921,
+    970,
+    1005,
+    1027,
+    1067,
+    1075,
+    1394,
+    39,
+    227,
+    411,
+    515,
+    532,
+    655,
+    665,
+    985,
+    1117,
+    1122,
+    1210
+  ],
+  "examples_by_category": {
+    "insulin_vs_cico": [
+      {
+        "line": 1,
+        "question": "If I accidentally eat a small snack or a handful of nuts during a fast, does that ruin all my progress?"
+      },
+      {
+        "line": 2,
+        "question": "What physiological responses occur when calorie intake is reduced that make the body defend its set weight?"
+      },
+      {
+        "line": 4,
+        "question": "Why might fasting make it harder to fall asleep or cause earlier waking than usual?"
+      },
+      {
+        "line": 5,
+        "question": "Why do low-carbohydrate (Atkins-style) diets often produce faster short-term weight loss and better metabolic markers than low-fat diets?"
+      },
+      {
+        "line": 6,
+        "question": "How should fasting and nutrition be adjusted for perimenopausal or menopausal women?"
+      },
+      {
+        "line": 7,
+        "question": "Why can fasting cause diarrhea for some people and how can psyllium husk or Metamucil help?"
+      },
+      {
+        "line": 8,
+        "question": "Why don't calories alone explain why some people gain or lose weight?"
+      },
+      {
+        "line": 9,
+        "question": "Why does giving more insulin or prescribing frequent carbohydrate meals to diabetics make no sense physiologically?"
+      },
+      {
+        "line": 13,
+        "question": "Why does eating a lot of glucose lead the liver to create new triglycerides?"
+      },
+      {
+        "line": 14,
+        "question": "Why do many health authorities still recommend eating breakfast if randomized trials don't support weight benefits?"
+      },
+      {
+        "line": 18,
+        "question": "Why are metformin and drugs that don't chronically raise insulin associated with fewer cardiovascular and cancer harms than sulfonylureas or insulin?"
+      },
+      {
+        "line": 21,
+        "question": "How prevalent are ultra-processed foods in American diets and how has that changed among children and teenagers?"
+      },
+      {
+        "line": 24,
+        "question": "What evidence shows that the calories-in/calories-out model is an incomplete explanation for obesity?"
+      },
+      {
+        "line": 25,
+        "question": "Why did the somatic mutation (genetic) theory of cancer fail to fully explain how cancers develop?"
+      },
+      {
+        "line": 27,
+        "question": "How do ultra-processed foods and engineered products contribute to food addiction and overeating?"
+      },
+      {
+        "line": 29,
+        "question": "Why can't a calorie deficit exist?"
+      },
+      {
+        "line": 30,
+        "question": "Is intermittent fasting unhealthy or a form of disordered eating?"
+      },
+      {
+        "line": 34,
+        "question": "Why do many people report more energy and a sense of wellbeing during short-term fasting instead of feeling weak or depleted?"
+      },
+      {
+        "line": 35,
+        "question": "Why is an unstructured eating plan less likely to lead to sustained weight loss than a structured approach like fasting or eating only twice a day?"
+      },
+      {
+        "line": 37,
+        "question": "Why do people often feel tired after a large meal while fasting can make them feel more alert?"
+      },
+      {
+        "line": 38,
+        "question": "How does insulin resistance affect your ability to lose weight?"
+      },
+      {
+        "line": 43,
+        "question": "Could short-term fasting be useful before an important task like a presentation to boost focus and alertness?"
+      },
+      {
+        "line": 46,
+        "question": "Why did low-fat, calorie-restricted diets become the standard advice in the 1970s?"
+      },
+      {
+        "line": 49,
+        "question": "How does insulin affect the body's ability to burn stored fat?"
+      },
+      {
+        "line": 51,
+        "question": "Why should I reduce refined grains like white flour, white rice, and white potatoes?"
+      },
+      {
+        "line": 52,
+        "question": "Why might moderate alcohol consumption, such as red wine, be associated with better health in some studies?"
+      },
+      {
+        "line": 53,
+        "question": "Are all calories equally fattening, or does the type of calorie matter for weight gain and loss?"
+      },
+      {
+        "line": 54,
+        "question": "Why might very lean athletes or thin women experience negative effects from aggressive or prolonged fasting?"
+      },
+      {
+        "line": 55,
+        "question": "Can intermittent fasting help preserve metabolic rate better than continuous calorie restriction?"
+      },
+      {
+        "line": 56,
+        "question": "Why might small clinical trials show dramatic blood pressure reductions with salt restriction while large trials show little or no effect?"
+      },
+      {
+        "line": 57,
+        "question": "Why do longer fasts need to be broken gently and what does gentle refeeding mean?"
+      },
+      {
+        "line": 59,
+        "question": "Why does eating more fiber help control blood sugar?"
+      },
+      {
+        "line": 60,
+        "question": "Why is joining a group or finding social support important when starting intermittent fasting?"
+      },
+      {
+        "line": 62,
+        "question": "Why does high insulin prevent the body from using stored fat for metabolism?"
+      },
+      {
+        "line": 63,
+        "question": "Why is hunger driven more by hormones and circadian rhythms than by whether the stomach is empty?"
+      },
+      {
+        "line": 64,
+        "question": "If the average weight gain is only about one pound per year despite high daily calorie intake, what does that imply about how body weight is regulated?"
+      },
+      {
+        "line": 65,
+        "question": "How much sugar are common starchy foods like rice and potatoes equivalent to compared with vegetables and eggs?"
+      },
+      {
+        "line": 66,
+        "question": "What is a fasting mimicking diet and how did it affect people with glomerular kidney diseases?"
+      },
+      {
+        "line": 68,
+        "question": "Why do we carry body fat and how does alternating between feeding and fasting fit into that purpose?"
+      },
+      {
+        "line": 71,
+        "question": "Which hormones raise the body's fat set point and promote fat storage?"
+      },
+      {
+        "line": 72,
+        "question": "How do processed and highly refined foods contribute to obesity compared with unrefined natural foods?"
+      },
+      {
+        "line": 76,
+        "question": "What drinks are allowed during a fast without breaking it?"
+      },
+      {
+        "line": 78,
+        "question": "Why does constipation sometimes happen during fasting and what can I do to manage it?"
+      },
+      {
+        "line": 79,
+        "question": "Why didn't societies that ate a lot of rice or potatoes historically have high obesity until recent decades?"
+      },
+      {
+        "line": 80,
+        "question": "Why is fasting considered more powerful than other diets for achieving calorie reduction and weight loss?"
+      },
+      {
+        "line": 85,
+        "question": "What did the Minnesota starvation (Ancel Keys) study show about eating less?"
+      },
+      {
+        "line": 86,
+        "question": "Why does the 'eat less, move more' approach usually fail for long-term weight loss?"
+      },
+      {
+        "line": 87,
+        "question": "What is medical ghostwriting and how does it affect the credibility of medical journal articles?"
+      },
+      {
+        "line": 89,
+        "question": "Why do refined starches like white bread, white rice, and potatoes cause bigger blood sugar spikes than unrefined carbs?"
+      },
+      {
+        "line": 91,
+        "question": "What is fat fasting and how is it used during a weight-loss regimen?"
+      }
+    ],
+    "low_carb": [
+      {
+        "line": 3,
+        "question": "How does water softening reduce dietary magnesium intake from drinking water?"
+      },
+      {
+        "line": 36,
+        "question": "Does eating saturated fat increase my risk of heart disease?"
+      },
+      {
+        "line": 47,
+        "question": "What's the difference between saturated fat in foods and saturated fatty acids measured in the blood?"
+      },
+      {
+        "line": 50,
+        "question": "Can you tell from your breath whether your body is burning fat or carbohydrates?"
+      },
+      {
+        "line": 75,
+        "question": "How might autophagy help prevent or slow neurodegenerative diseases like Alzheimer's?"
+      },
+      {
+        "line": 107,
+        "question": "How does easy access to international and exotic foods affect how much people eat?"
+      },
+      {
+        "line": 207,
+        "question": "How does reducing the pleasure of eating help someone eat less without feeling hungry?"
+      },
+      {
+        "line": 219,
+        "question": "How did the INTERSALT study contribute to the belief that salt causes hypertension, and what were the problems with that study?"
+      },
+      {
+        "line": 243,
+        "question": "What does measuring exhaled carbon dioxide tell you about whether your body is burning carbs or fat?"
+      },
+      {
+        "line": 263,
+        "question": "Do calcium supplements reduce the risk of hip fractures in older women?"
+      },
+      {
+        "line": 282,
+        "question": "Are fruits okay to eat on a low-carb diet, and which fruits are least likely to raise blood sugar?"
+      },
+      {
+        "line": 303,
+        "question": "How can autophagy contribute to cardiovascular health and potentially reduce the risk of heart attacks or strokes?"
+      },
+      {
+        "line": 315,
+        "question": "Can bitter foods like bitter melon lower blood glucose by increasing GLP-1 secretion?"
+      },
+      {
+        "line": 320,
+        "question": "What is the purpose of keeping a food journal when trying to improve blood sugar control?"
+      },
+      {
+        "line": 326,
+        "question": "How much can lemon juice reduce the glycemic index of carbohydrate-rich foods?"
+      },
+      {
+        "line": 330,
+        "question": "How does dietary fiber and resistant starch boost GLP-1 through short-chain fatty acids produced by the gut microbiome?"
+      },
+      {
+        "line": 334,
+        "question": "How can a handheld breath device measure whether I'm burning carbohydrates or fat?"
+      },
+      {
+        "line": 337,
+        "question": "How do incretins make you feel full and delay the next meal?"
+      },
+      {
+        "line": 342,
+        "question": "How did NHANES studies relate individual salt intake to cardiovascular death rates in the United States?"
+      },
+      {
+        "line": 347,
+        "question": "What foods did historical medical texts recommend you could eat freely for weight loss?"
+      },
+      {
+        "line": 373,
+        "question": "How did the low-fat dietary guidelines from the 1970s contribute to the growth of ultra-processed foods?"
+      },
+      {
+        "line": 378,
+        "question": "What are the five components that make up metabolic syndrome?"
+      },
+      {
+        "line": 380,
+        "question": "What major health problems can be prevented when people get healthier and lose weight?"
+      },
+      {
+        "line": 397,
+        "question": "How was the recommended 1,200 mg daily calcium amount originally determined?"
+      },
+      {
+        "line": 399,
+        "question": "What should a typical low-carbohydrate plate look like in terms of vegetables and protein?"
+      },
+      {
+        "line": 403,
+        "question": "Are whole foods high in saturated fat, like dark chocolate and full-fat dairy, linked to higher rates of diabetes or heart disease?"
+      },
+      {
+        "line": 437,
+        "question": "Does vitamin D intake show a clearer benefit for reducing hip fractures than calcium intake?"
+      },
+      {
+        "line": 440,
+        "question": "How much does a low-salt diet lower systolic and diastolic blood pressure on average?"
+      },
+      {
+        "line": 458,
+        "question": "Do GLP-1 drugs change the kinds of macronutrients people eat, like carbs or fats?"
+      },
+      {
+        "line": 462,
+        "question": "What did large studies like PURE find about dietary fat and risk of heart disease or death?"
+      },
+      {
+        "line": 468,
+        "question": "How much weight loss was observed on average in patients who adopted the low-carb recommendations?"
+      },
+      {
+        "line": 470,
+        "question": "What are the body's main fuel sources and how are glucose and fat stored and mobilized?"
+      },
+      {
+        "line": 497,
+        "question": "How can high-intensity exercise help relieve stress and potentially break a weight loss plateau?"
+      },
+      {
+        "line": 539,
+        "question": "How did early dieting advice in the 1800s treat sugar and starches?"
+      },
+      {
+        "line": 543,
+        "question": "What kinds of foods generally have zero or negligible effect on blood glucose?"
+      },
+      {
+        "line": 556,
+        "question": "How can adding vinegar or lemon juice to starchy foods reduce blood sugar spikes?"
+      },
+      {
+        "line": 559,
+        "question": "What did the PURE study find about total fat, saturated fat, carbohydrates, and overall mortality?"
+      },
+      {
+        "line": 563,
+        "question": "What dietary strategies can naturally boost incretin (GLP-1/GIP) levels without taking medications?"
+      },
+      {
+        "line": 595,
+        "question": "How do pickled or fermented foods affect the glycemic index of white rice?"
+      },
+      {
+        "line": 608,
+        "question": "What is the respiratory quotient (RQ) and what do values like 1.0 and 0.7 mean?"
+      },
+      {
+        "line": 638,
+        "question": "How does the autophagy process actually break down and recycle old cellular proteins?"
+      },
+      {
+        "line": 658,
+        "question": "How many grams of total carbohydrates per day are suggested for a very low carbohydrate diet aimed at improving blood sugar?"
+      },
+      {
+        "line": 668,
+        "question": "Does eating more protein increase GLP-1 and reduce hunger, and are certain proteins (like those rich in BCAAs) especially effective?"
+      },
+      {
+        "line": 692,
+        "question": "Is physical activity more important than calcium intake for building bone strength in children?"
+      },
+      {
+        "line": 709,
+        "question": "What average weight loss did studies report for people following a paleo diet compared to a standard diet?"
+      },
+      {
+        "line": 710,
+        "question": "Which specific foods should be cut out or reduced on a low-carb plan for diabetes?"
+      },
+      {
+        "line": 714,
+        "question": "What is the respiratory quotient (RQ) and how does it indicate whether I'm burning carbs or fat?"
+      },
+      {
+        "line": 770,
+        "question": "How can checking blood glucose frequently change what I eat and how I manage my diabetes?"
+      },
+      {
+        "line": 772,
+        "question": "How does helping people lose weight reduce the burden of conditions doctors see, such as heart attacks, strokes, cancer, and kidney disease?"
+      },
+      {
+        "line": 783,
+        "question": "How does activation of GLP-1 receptors in the area postrema cause vomiting and contribute to reduced eating?"
+      }
+    ],
+    "fasting_practice": [
+      {
+        "line": 10,
+        "question": "How does intermittent fasting make life more convenient?"
+      },
+      {
+        "line": 23,
+        "question": "What kinds of foods and items are typically included in a 5-day fasting mimicking program box?"
+      },
+      {
+        "line": 31,
+        "question": "How much can blood pressure change from adopting a time-restricted eating pattern?"
+      },
+      {
+        "line": 33,
+        "question": "How does hunger change during a multi-day fast?"
+      },
+      {
+        "line": 41,
+        "question": "How can chronic sublethal cellular injury lead to cancer even when the injurious agent is not mutagenic?"
+      },
+      {
+        "line": 48,
+        "question": "Are common store-bought breakfast options generally healthy or are they often ultra-processed?"
+      },
+      {
+        "line": 61,
+        "question": "Is there an upper limit to how many days someone can fast, and are there extreme examples?"
+      },
+      {
+        "line": 67,
+        "question": "What safety steps should I take before starting intermittent fasting if I have type 2 diabetes?"
+      },
+      {
+        "line": 77,
+        "question": "How does fasting trigger autophagy and what kinds of intake can blunt that process?"
+      },
+      {
+        "line": 82,
+        "question": "How do I start intermittent fasting if I'm used to frequent meals, and how long might it take before I see results?"
+      },
+      {
+        "line": 84,
+        "question": "What does a 24-hour fast or one-meal-a-day (OMAD) schedule look like?"
+      },
+      {
+        "line": 88,
+        "question": "How does intermittent fasting or extending the time without eating help empty excess sugar from the body?"
+      },
+      {
+        "line": 90,
+        "question": "What's the difference between fasting and starvation?"
+      },
+      {
+        "line": 97,
+        "question": "What are common emotional triggers that make people eat even when they aren't physically hungry?"
+      },
+      {
+        "line": 98,
+        "question": "Does intermittent fasting or dieting cause anorexia or bulimia?"
+      },
+      {
+        "line": 99,
+        "question": "What specific role does a fasting coach play and how can coaching speed up results?"
+      },
+      {
+        "line": 105,
+        "question": "Can coaching or community support actually help reverse type 2 diabetes and reduce medication use?"
+      },
+      {
+        "line": 106,
+        "question": "How does fasting compare with standard toxic immunosuppressive treatments used for autoimmune glomerular diseases?"
+      },
+      {
+        "line": 108,
+        "question": "How often do doctors use intermittent fasting themselves compared with how often they recommend it to patients?"
+      },
+      {
+        "line": 110,
+        "question": "How does food addiction differ from just not having the right knowledge, and what strategies help manage it?"
+      },
+      {
+        "line": 111,
+        "question": "Can intermittent fasting help someone with type 2 diabetes reduce or stop their medications?"
+      },
+      {
+        "line": 114,
+        "question": "How can peer support or group fasting make it easier to stick with a fasting routine?"
+      },
+      {
+        "line": 127,
+        "question": "How does industry funding influence medical and nutrition education and research outcomes?"
+      },
+      {
+        "line": 128,
+        "question": "How should I change my daily eating pattern as an initial step toward intermittent fasting?"
+      },
+      {
+        "line": 133,
+        "question": "How can preparing meals ahead of time help me stick to a fasting schedule when others need to eat?"
+      },
+      {
+        "line": 137,
+        "question": "How can intermittent fasting help people with type 2 diabetes lower their blood glucose?"
+      },
+      {
+        "line": 140,
+        "question": "Has intermittent fasting been studied as a way to achieve drug-free remission of type 2 diabetes?"
+      },
+      {
+        "line": 141,
+        "question": "What role can a coach, group, or friend play in supporting someone trying to lose weight?"
+      },
+      {
+        "line": 168,
+        "question": "How might increased free fatty acids like linoleic acid during fasting influence how SARS-CoV-2 binds to human cells?"
+      },
+      {
+        "line": 173,
+        "question": "Which foods should I cut down or avoid to help control blood sugar while practicing intermittent fasting?"
+      },
+      {
+        "line": 178,
+        "question": "What potential side effects or changes should I expect when starting a fast?"
+      },
+      {
+        "line": 182,
+        "question": "How can emotional factors like stress, boredom, or lack of inspiration lead to overeating?"
+      },
+      {
+        "line": 183,
+        "question": "What can I drink during a fast\u2014are coffee, tea, or bone broth allowed?"
+      },
+      {
+        "line": 184,
+        "question": "How can increasing salt intake, bone broth, or pickle juice help with fasting-related headaches?"
+      },
+      {
+        "line": 186,
+        "question": "How can fasting help with emotional eating and long-term weight control?"
+      },
+      {
+        "line": 190,
+        "question": "What fasting regimen did someone use to lose around 80 pounds, including daily and occasional longer fasts?"
+      },
+      {
+        "line": 202,
+        "question": "What precautions should someone with type 1 or type 2 diabetes take before starting a fasting regimen?"
+      },
+      {
+        "line": 204,
+        "question": "What does the phrase 'research lacking probative value' mean when applied to breakfast studies?"
+      },
+      {
+        "line": 205,
+        "question": "What tactics do drug companies use in sponsored continuing medical education and speaker programs to promote their products?"
+      },
+      {
+        "line": 206,
+        "question": "How long should the overnight fasting period be between dinner and breakfast?"
+      },
+      {
+        "line": 211,
+        "question": "What role does weight loss play in improving or reversing type 2 diabetes?"
+      },
+      {
+        "line": 218,
+        "question": "What are simple steps to stop snacking and return to a 2\u20133 meals-per-day routine with an overnight fast?"
+      },
+      {
+        "line": 224,
+        "question": "How can I structure fasting into my weekly schedule if some days are busier than others?"
+      },
+      {
+        "line": 226,
+        "question": "How are children's breakfast foods different in terms of sugar and addictiveness?"
+      },
+      {
+        "line": 228,
+        "question": "What change in the daily eating window was used to implement time-restricted eating, and how was that achieved?"
+      },
+      {
+        "line": 229,
+        "question": "What counts as dry fasting and how long is it safe to do?"
+      },
+      {
+        "line": 233,
+        "question": "How can combining intermittent fasting with a low-carbohydrate diet affect type 2 diabetes and medication needs?"
+      },
+      {
+        "line": 236,
+        "question": "How much did hemoglobin A1c and body weight change in the group that did the fasting-mimicking diet?"
+      },
+      {
+        "line": 247,
+        "question": "What safety precautions should I take before and during a fast?"
+      },
+      {
+        "line": 251,
+        "question": "How long were the extended fasts some people used and how often did they typically do them?"
+      }
+    ],
+    "insulin_mechanism": [
+      {
+        "line": 11,
+        "question": "How can high insulin levels raise blood pressure?"
+      },
+      {
+        "line": 12,
+        "question": "Can drinking green tea help me burn more body fat, especially around the waist?"
+      },
+      {
+        "line": 15,
+        "question": "How does the body partition incoming energy between immediate burning and storage?"
+      },
+      {
+        "line": 16,
+        "question": "How do protein, fiber and fat in whole foods protect against spikes in blood sugar and insulin?"
+      },
+      {
+        "line": 19,
+        "question": "How does resistant starch that reaches the colon get converted by gut bacteria and how can that affect hunger hormones?"
+      },
+      {
+        "line": 20,
+        "question": "How can intermittent fasting help someone improve or reverse type 2 diabetes?"
+      },
+      {
+        "line": 22,
+        "question": "What role does insulin play in signaling the body to store fat or to make you feel hungry?"
+      },
+      {
+        "line": 26,
+        "question": "How does shifting the body's metabolism from glucose to fat oxidation help protect the kidneys in type 2 diabetes?"
+      },
+      {
+        "line": 28,
+        "question": "Is it necessary to eat breakfast to have enough energy for the day?"
+      },
+      {
+        "line": 32,
+        "question": "What fasting durations are commonly used as therapeutic approaches for PCOS?"
+      },
+      {
+        "line": 40,
+        "question": "Can I include starchy foods like potatoes, rice, and sweet potatoes in a weight loss plan?"
+      },
+      {
+        "line": 42,
+        "question": "What are ultra-processed foods and how do they differ from natural or minimally processed foods?"
+      },
+      {
+        "line": 44,
+        "question": "How does a low-salt diet affect hormones like renin and aldosterone?"
+      },
+      {
+        "line": 45,
+        "question": "How does insulin act as a switch for storing or releasing fat?"
+      },
+      {
+        "line": 58,
+        "question": "Are there safety considerations for fasting, especially for people on medications, and when should someone be cautious?"
+      },
+      {
+        "line": 70,
+        "question": "Do I have to cut out all carbohydrates to lose weight?"
+      },
+      {
+        "line": 73,
+        "question": "If LDL cholesterol isn't the main cause of heart attacks, which metabolic markers matter more?"
+      },
+      {
+        "line": 74,
+        "question": "How does eating carbohydrates last affect blood glucose and insulin levels?"
+      },
+      {
+        "line": 81,
+        "question": "How can regular fasting help reverse pre-diabetes and improve fatty liver disease?"
+      },
+      {
+        "line": 83,
+        "question": "How does insulin normally allow glucose to enter cells?"
+      },
+      {
+        "line": 93,
+        "question": "What causes insulin resistance in the body?"
+      },
+      {
+        "line": 95,
+        "question": "What specific diet and fasting routine helped Mark stop taking insulin and normalize his A1c?"
+      },
+      {
+        "line": 104,
+        "question": "How did ghostwritten review articles contribute to the widespread use of hormone replacement therapy before its risks were widely known?"
+      },
+      {
+        "line": 118,
+        "question": "Which rice varieties have higher amylose content and therefore cause slower rises in blood glucose?"
+      },
+      {
+        "line": 122,
+        "question": "Does eating protein during a fasting-style approach raise insulin and interfere with the metabolic benefits of fasting?"
+      },
+      {
+        "line": 129,
+        "question": "How can a low-carbohydrate or ketogenic diet make it easier to start intermittent fasting?"
+      },
+      {
+        "line": 150,
+        "question": "What different types of autophagy are there and what cellular material does each type target?"
+      },
+      {
+        "line": 157,
+        "question": "What dietary approaches (e.g., Mediterranean, low\u2011carb, low glycemic index, paleo) have shown better results for blood sugar control and reduced need for diabetes medications?"
+      },
+      {
+        "line": 160,
+        "question": "Did any participants experience hypoglycemia when they ate carbohydrates first?"
+      },
+      {
+        "line": 161,
+        "question": "What practical steps can someone start with if they want to try intermittent fasting to improve their diabetes?"
+      },
+      {
+        "line": 176,
+        "question": "By how much can eating protein and fat before carbs reduce blood glucose spikes?"
+      },
+      {
+        "line": 177,
+        "question": "What historical evidence supports cutting starchy and sugary foods as an approach to treating obesity?"
+      },
+      {
+        "line": 180,
+        "question": "How does insulin influence whether the body stores or releases fat?"
+      },
+      {
+        "line": 181,
+        "question": "What role does insulin play in weight gain and weight loss?"
+      },
+      {
+        "line": 185,
+        "question": "How does the body 'translate' the energy in food into hormonal signals that control hunger and storage?"
+      },
+      {
+        "line": 187,
+        "question": "How does insulin affect water retention and increased urination when you start fasting?"
+      },
+      {
+        "line": 192,
+        "question": "Can intermittent fasting be combined with a low\u2011carbohydrate diet, and does that improve results?"
+      },
+      {
+        "line": 201,
+        "question": "Do higher doses of insulin or drugs that increase insulin production cause weight gain?"
+      },
+      {
+        "line": 208,
+        "question": "How is type 2 diabetes different from type 1 diabetes?"
+      },
+      {
+        "line": 213,
+        "question": "What is the role of insulin and hyperinsulinemia in the development and symptoms of PCOS?"
+      },
+      {
+        "line": 214,
+        "question": "How does hunger change during fasting and what happens to the hunger hormone ghrelin over time?"
+      },
+      {
+        "line": 225,
+        "question": "How does insulin influence whether the body stores or burns fat?"
+      },
+      {
+        "line": 235,
+        "question": "What role does dietary fiber play in lowering insulin spikes and protecting against weight gain?"
+      },
+      {
+        "line": 237,
+        "question": "How quickly can reducing insulin through fasting or diet lower the need for medications like insulin injections?"
+      },
+      {
+        "line": 238,
+        "question": "How can high insulin levels actually cause or worsen insulin resistance?"
+      },
+      {
+        "line": 242,
+        "question": "Is whole wheat bread much better than white bread for blood sugar and weight control?"
+      },
+      {
+        "line": 246,
+        "question": "How should I eat during my feeding window to make fasting effective for weight loss?"
+      },
+      {
+        "line": 250,
+        "question": "How does insulin trigger the shifts that lead to refeeding syndrome when you start eating again?"
+      },
+      {
+        "line": 256,
+        "question": "What is lipolysis and how do high insulin levels affect it?"
+      },
+      {
+        "line": 267,
+        "question": "What is the body set weight and how does it act like a thermostat for body fat?"
+      }
+    ],
+    "related_health": [
+      {
+        "line": 17,
+        "question": "How does a funnel plot help detect publication bias in trials about salt and blood pressure?"
+      },
+      {
+        "line": 69,
+        "question": "What is EGCG and how much of it is typically in a cup of green tea?"
+      },
+      {
+        "line": 144,
+        "question": "How do muscles grow or shrink based on activity and use?"
+      },
+      {
+        "line": 166,
+        "question": "How can different causes of obesity, like emotional eating or medications, require different weight-loss strategies?"
+      },
+      {
+        "line": 216,
+        "question": "How successful were the surveyed physicians at losing weight over the past year?"
+      },
+      {
+        "line": 244,
+        "question": "Does eating food with green tea change how well its catechins are absorbed?"
+      },
+      {
+        "line": 261,
+        "question": "Who tends to gain the most weight during holidays or vacations \u2014 people who are already overweight or people who are not?"
+      },
+      {
+        "line": 262,
+        "question": "Does a spouse or neighbor affect my obesity risk as much as a close friend?"
+      },
+      {
+        "line": 279,
+        "question": "How can members help decide which health and weight-loss videos get made?"
+      },
+      {
+        "line": 333,
+        "question": "How did extending sleep affect people's body weight compared to those who didn't change their sleep?"
+      },
+      {
+        "line": 335,
+        "question": "Could salt simply be a marker for eating ultra-processed foods rather than being the direct cause of high blood pressure?"
+      },
+      {
+        "line": 375,
+        "question": "If you take a statin for primary prevention, how much extra life expectancy can you generally expect?"
+      },
+      {
+        "line": 402,
+        "question": "What evidence shows that obesity can spread through social networks rather than just shared environment?"
+      },
+      {
+        "line": 438,
+        "question": "How are cancer cells similar to single-celled organisms in their behavior and priorities?"
+      },
+      {
+        "line": 482,
+        "question": "How much of the average annual weight gain happens during the six-week holiday period?"
+      },
+      {
+        "line": 529,
+        "question": "What are the stages of fatty liver disease and how can it progress to cirrhosis?"
+      },
+      {
+        "line": 623,
+        "question": "How is visceral obesity measured and what waist circumference values indicate it for men and women?"
+      },
+      {
+        "line": 644,
+        "question": "What common cancers are strongly linked to obesity?"
+      },
+      {
+        "line": 703,
+        "question": "Does testosterone replacement reduce visceral (intra-abdominal) fat differently than subcutaneous fat?"
+      },
+      {
+        "line": 778,
+        "question": "How does green tea increase the amount of energy my body burns?"
+      },
+      {
+        "line": 780,
+        "question": "How much protein does the body actually turn over or lose each day?"
+      },
+      {
+        "line": 854,
+        "question": "How can eating fructose lead to fatty liver and higher triglyceride production?"
+      },
+      {
+        "line": 928,
+        "question": "How does the example of astronauts losing bone in space illustrate the role of stress and use in maintaining tissue strength?"
+      },
+      {
+        "line": 999,
+        "question": "How quickly can muscles atrophy when they're not used, like during bed rest or space travel?"
+      },
+      {
+        "line": 1031,
+        "question": "How can journaling increase mindfulness and help with diabetes-related behavior change?"
+      },
+      {
+        "line": 1054,
+        "question": "How much does having a friend who gains weight increase my own risk of becoming obese?"
+      },
+      {
+        "line": 1131,
+        "question": "Do GLP-1 drugs act directly on the brain to reduce hunger, and if so where do they work?"
+      },
+      {
+        "line": 1134,
+        "question": "What role does sleep play in hunger, food cravings, and weight management?"
+      },
+      {
+        "line": 1147,
+        "question": "What sleep duration was considered sleep deprived in the study and who might benefit from sleep extension?"
+      },
+      {
+        "line": 1162,
+        "question": "How did type 2 diabetes become such a modern epidemic in recent decades?"
+      },
+      {
+        "line": 1295,
+        "question": "How did major diabetes guidelines change around 2021 regarding whether type 2 diabetes can be reversed?"
+      },
+      {
+        "line": 1313,
+        "question": "What is the metabolic syndrome and which conditions are included in it?"
+      },
+      {
+        "line": 1324,
+        "question": "What practical steps can I take to make it easier to lose weight using social support?"
+      },
+      {
+        "line": 1388,
+        "question": "Where in the brain do incretins act to control appetite and how do they get there?"
+      },
+      {
+        "line": 1482,
+        "question": "Do genetic or population differences make green tea more effective for weight loss in some people than others?"
+      },
+      {
+        "line": 1588,
+        "question": "How much weight loss have studies shown from regularly drinking green tea on average?"
+      }
+    ],
+    "uncategorized": [
+      {
+        "line": 39,
+        "question": "How do small environmental nudges (like ordering on an app or brushing teeth) help prevent overeating?"
+      },
+      {
+        "line": 227,
+        "question": "How much of starch digestion happens in the stomach before pancreatic enzymes take over?"
+      },
+      {
+        "line": 411,
+        "question": "What are the two leading causes of death that most affect how long and how healthily people live?"
+      },
+      {
+        "line": 515,
+        "question": "Can taking calcium supplements increase the risk of kidney stones?"
+      },
+      {
+        "line": 532,
+        "question": "How common are side effects like nausea with GLP-1 agonists and how big is the difference versus placebo?"
+      },
+      {
+        "line": 655,
+        "question": "How can joining a membership help bring health information to more people?"
+      },
+      {
+        "line": 665,
+        "question": "What exclusive perks do members receive in a health-focused membership?"
+      },
+      {
+        "line": 985,
+        "question": "How does the way research and continuing medical education are funded by drug companies affect clinical recommendations?"
+      },
+      {
+        "line": 1117,
+        "question": "What does it mean to 'regain your health' when trying to prevent serious conditions like heart attacks and strokes?"
+      },
+      {
+        "line": 1122,
+        "question": "When during the day should testosterone levels be measured for accuracy?"
+      },
+      {
+        "line": 1210,
+        "question": "What is a funnel plot and how can publication bias distort the apparent benefits of salt reduction?"
+      }
+    ],
+    "nutrition_general": [
+      {
+        "line": 175,
+        "question": "How can someone identify personal food triggers like diet soda or movie-theater snacks and manage them?"
+      },
+      {
+        "line": 287,
+        "question": "How do modern food displays and 24-hour availability contribute to overeating?"
+      },
+      {
+        "line": 291,
+        "question": "How does the body metabolize fructose differently from glucose?"
+      },
+      {
+        "line": 449,
+        "question": "What non-food activities can I plan as alternatives for emotional or celebratory eating?"
+      },
+      {
+        "line": 487,
+        "question": "If I want to build muscle, can I do it just by eating more protein without exercising?"
+      },
+      {
+        "line": 510,
+        "question": "What makes industrial vegetable oils like corn and canola different from traditional oils such as olive oil or coconut oil?"
+      },
+      {
+        "line": 680,
+        "question": "What are common environmental triggers that cause people to overeat?"
+      },
+      {
+        "line": 832,
+        "question": "How did Neurontin become so widely prescribed off-label for pain and psychiatric conditions despite weak supporting evidence?"
+      },
+      {
+        "line": 921,
+        "question": "Are trans fats worse for heart disease than natural saturated fats?"
+      },
+      {
+        "line": 970,
+        "question": "Can excess dietary protein be converted into glucose in the body?"
+      },
+      {
+        "line": 1005,
+        "question": "Are omega-3 fats from fish protective against heart disease?"
+      },
+      {
+        "line": 1027,
+        "question": "How does doing physical activities in nature help with stress and eating habits?"
+      },
+      {
+        "line": 1067,
+        "question": "Can taking calcium supplements increase the risk of heart attack or stroke?"
+      },
+      {
+        "line": 1075,
+        "question": "How can fun elements like badges and emojis support a health-focused membership community?"
+      },
+      {
+        "line": 1394,
+        "question": "Do countries with very high salt intake, like Japan, have higher rates of hypertension than countries like the United States?"
+      }
+    ],
+    "very_specific": [
+      {
+        "line": 491,
+        "question": "How do estrogen and progesterone affect appetite during the menstrual cycle?"
+      },
+      {
+        "line": 895,
+        "question": "Can soaking in Epsom salt baths or hot springs reliably increase the body's magnesium levels?"
+      }
+    ]
+  }
+}

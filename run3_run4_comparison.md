@@ -1,0 +1,85 @@
+# Training Runs Comparison
+
+Generated: 2025-11-11T18:01:08.777896
+
+```
+========================================================================================================================
+TRAINING RUNS COMPARISON
+========================================================================================================================
+
+HYPERPARAMETERS
+------------------------------------------------------------------------------------------------------------------------
+         Run |           LR |        Batch |        Iters |      Seq Len |  LoRA Layers |    LoRA Rank |     Grad Acc |   Grad Check
+------------------------------------------------------------------------------------------------------------------------
+SmolLM3-3B_run3 |     1.00e-05 |            2 |         1800 |          512 |           16 |            8 |            4 |            ✓
+SmolLM3-3B_run4 |     1.00e-05 |            2 |         1600 |          700 |           12 |            8 |           16 |            ✓
+
+
+TRAINING METRICS
+------------------------------------------------------------------------------------------------------------------------
+            Run |      Final Iter |      Train Loss |        Val Loss |      Tokens/sec |          It/sec |   Peak Mem (GB)
+------------------------------------------------------------------------------------------------------------------------
+SmolLM3-3B_run3 |            1800 |          1.4430 |          1.6290 |           180.2 |           0.417 |            8.08
+SmolLM3-3B_run4 |             N/A |             N/A |             N/A |             N/A |             N/A |             N/A
+
+========================================================================================================================
+```
+
+## Detailed Data
+
+```json
+[
+  {
+    "run_name": "SmolLM3-3B_run3",
+    "run_path": "/Users/tommyyau/VSCode/jason-fung-mlx/models/SmolLM3-3B_run3",
+    "timestamp": "2025-11-11T18:01:08.776893",
+    "hyperparameters": {
+      "model": "HuggingFaceTB/SmolLM3-3B",
+      "learning_rate": 1e-05,
+      "batch_size": 2,
+      "iters": 1800,
+      "max_seq_length": 512,
+      "num_layers": 16,
+      "lora_rank": 8,
+      "grad_accumulation_steps": 4,
+      "grad_checkpoint": true,
+      "steps_per_eval": 200,
+      "steps_per_report": 50,
+      "save_every": 500
+    },
+    "training_metrics": {},
+    "final_metrics": {
+      "final_iteration": 1800,
+      "final_train_loss": 1.443,
+      "final_val_loss": 1.629,
+      "final_learning_rate": 1e-05,
+      "final_tokens_per_sec": 180.235,
+      "final_iterations_per_sec": 0.417,
+      "total_trained_tokens": 751673,
+      "peak_memory_gb": 8.082,
+      "final_val_time_sec": 28.928
+    }
+  },
+  {
+    "run_name": "SmolLM3-3B_run4",
+    "run_path": "/Users/tommyyau/VSCode/jason-fung-mlx/models/SmolLM3-3B_run4",
+    "timestamp": "2025-11-11T18:01:08.777349",
+    "hyperparameters": {
+      "model": "HuggingFaceTB/SmolLM3-3B",
+      "learning_rate": 1e-05,
+      "batch_size": 2,
+      "iters": 1600,
+      "max_seq_length": 700,
+      "num_layers": 12,
+      "lora_rank": 8,
+      "grad_accumulation_steps": 16,
+      "grad_checkpoint": true,
+      "steps_per_eval": 50,
+      "steps_per_report": 50,
+      "save_every": 500
+    },
+    "training_metrics": {},
+    "final_metrics": {}
+  }
+]
+```

@@ -1,0 +1,63 @@
+# MLX Training Configuration - Run 4 (Better Regularization)
+# Direct CLI usage: python -m mlx_lm lora --config config/mlx_smolLM3_training_run4.yaml
+#
+# This config improves regularization to prevent overfitting while learning the Jason Fung lens.
+# Key changes from run3:
+# - num_layers: 16 → 12 (preserve more base model)
+# - grad_accumulation_steps: 4 → 8 (more stable gradients)
+# - Added lora_alpha: 8 (reduce LoRA influence)
+# - Added lora_dropout: 0.1 (prevent overfitting)
+# - iters: 1800 → 1200 (2 epochs instead of 3)
+# - Re-enabled steps_per_eval: 50 (watch for overfitting)
+
+# Base model
+model: HuggingFaceTB/SmolLM3-3B
+
+# Data directory (must contain train.jsonl and valid.jsonl)
+data: data/mlx_training_data
+# Output directory for LoRA adapters
+adapter_path: models/SmolLM3-3B_run4
+
+# Enable training
+train: true
+
+# Fine-tuning method
+fine_tune_type: lora
+
+# Optimizer
+optimizer: adamw
+
+# LoRA configuration - BETTER REGULARIZATION
+num_layers: 12  # Reduced from 16 - preserve more base model layers
+lora_rank: 8
+lora_alpha: 8  # ADDED - reduces LoRA influence, prevents overfitting
+lora_dropout: 0.1  # ADDED - regularization to prevent memorization
+
+# Training hyperparameters (optimized for 16GB RAM Apple Silicon)
+learning_rate: 1e-5  # Keep at 1e-5 as requested
+batch_size: 2  # Increased from 1: seq_length reduction (1024→512) frees enough memory
+iters: 1600  # 2 epochs: 1600 examples / batch_size 2 = 800 iters/epoch × 2 = 1600
+max_seq_length: 800  # Actual max: 739 tokens (line 1532), 800 provides buffer for safety
+
+# Gradient handling - BETTER REGULARIZATION
+grad_accumulation_steps: 16  # Increased from 4 - more stable gradients, smoother learning
+grad_checkpoint: true  # Enable gradient checkpointing to save memory
+
+# Dora configuration
+use_dora: false  # Disable if enabled, saves memory
+
+# Training monitoring
+steps_per_eval: 50  # Re-enabled - watch validation loss to catch overfitting early
+steps_per_report: 50  # Report progress every 50 steps
+save_every: 500  # Save checkpoint every 500 steps
+
+# Reproducibility
+seed: 42
+
+# Notes:
+# - Close Cursor/IDEs before training for 50-70% speedup (see docs/PERFORMANCE_OPTIMIZATION.md)
+# - Training takes ~60 minutes on 16GB M1 MacBook Pro with apps closed (2 epochs vs 3)
+# - Monitor with: Activity Monitor → Memory tab (should stay GREEN)
+# - Watch validation loss - if it starts increasing, model is overfitting
+# - Best checkpoint is usually when validation loss is lowest (not necessarily final checkpoint)
+

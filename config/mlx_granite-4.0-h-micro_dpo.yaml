@@ -1,0 +1,149 @@
+# MLX DPO Training Configuration - Granite 4.0 H-Micro
+# Usage: python3 scripts/phase4-fine-tune-model/10_train_dpo.py --config config/mlx_granite-4.0-h-micro_dpo.yaml --stage [precompute|train]
+#
+# DPO (Direct Preference Optimization) trains models to prefer certain responses over others
+# This is different from standard supervised fine-tuning (SFT)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODEL & DATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Base model to train
+model: ibm-granite/granite-4.0-h-micro
+
+# DPO training data (must contain: prompt, chosen, rejected)
+# Format: {"prompt": "Question: ...\nAnswer:", "chosen": "...", "rejected": "..."}
+data: data/mlx_training_data/dpo_train.jsonl
+
+# Output directory for LoRA adapters
+output_dir: models/granite-4.0-h-micro-dpo
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DPO-SPECIFIC PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Beta: Controls how strongly DPO enforces preference learning
+# - Higher beta (0.5) = stronger preference enforcement, faster learning, risk of overfitting
+# - Lower beta (0.01) = gentler learning, more stable, slower convergence
+# - Standard: 0.1 works well for most cases
+beta: 0.1
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LORA CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Number of transformer layers to apply LoRA to (Granite H-Micro has 40 layers)
+# - More layers = more capacity to learn, but slower and more memory
+# - Fewer layers = faster, less memory, but less capacity
+num_layers: 16
+
+# LoRA rank: Dimensionality of the low-rank adaptation
+# - Higher rank (16, 32) = more capacity, better learning, more memory
+# - Lower rank (4, 8) = less memory, faster, but may underfit
+# - DPO typically needs less capacity than SFT since it's refining, not teaching new facts
+lora_rank: 8
+
+# LoRA alpha: Scaling factor for LoRA updates
+# - Typically set equal to rank for balanced learning
+# - Higher alpha = stronger LoRA influence
+lora_alpha: 16
+
+# LoRA dropout: Regularization to prevent overfitting
+# - 0.0 = no dropout (faster, risk of overfitting)
+# - 0.1 = light regularization (good default)
+# - 0.2+ = heavy regularization (use if overfitting)
+lora_dropout: 0.0
+
+# LoRA scale: Internal scaling parameter
+# - Usually 10.0 (MLX default)
+# - Don't change unless you know what you're doing
+lora_scale: 10.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TRAINING HYPERPARAMETERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Learning rate: How fast the model learns
+# - DPO typically uses lower LR than SFT (1e-6 to 5e-6)
+# - Too high = unstable training, divergence
+# - Too low = very slow learning
+learning_rate: 1e-6
+
+# Training steps: Total number of gradient updates
+# - DPO needs fewer steps than SFT (50-500 is typical)
+# - Monitor reward_diff - stop when it plateaus
+steps: 300
+
+# Epochs: Number of passes through the dataset
+# - Usually 1 for DPO (we iterate through data once)
+# - Set to 2-3 if you have very little data
+epochs: 1
+
+# Batch size: Number of examples per gradient update
+# - Set to 1 for 16GB RAM (memory constraint)
+# - Increase to 2-4 if you have more RAM
+batch_size: 1
+
+# Gradient accumulation steps: Simulate larger batch size
+# - Effective batch size = batch_size × grad_accumulation_steps
+# - Higher = more stable gradients, but slower
+# - 4-16 is typical for DPO
+grad_accumulation_steps: 8
+
+# Maximum sequence length: Truncate longer examples
+# - Longer = more context, but more memory
+# - 1024 is good for most Q&A tasks
+# - Reduce to 512 if running out of memory
+max_seq_length: 1024
+
+# Optimizer: Algorithm for updating weights
+# - adamw is standard (Adam with weight decay)
+# - Don't change unless you have a specific reason
+optimizer: adamw
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MONITORING & CHECKPOINTING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# How often to print training progress (in steps)
+# - Lower = more verbose logging
+# - Higher = cleaner output
+steps_per_report: 10
+
+# How often to save checkpoints (in steps)
+# - Set to 0 to disable checkpointing
+# - Useful for long training runs in case of crashes
+save_every: 50
+
+# Random seed for reproducibility
+# - Same seed = same results (if everything else is identical)
+# - Change to get different random initializations
+seed: 42
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PARAMETERS NOT USED IN DPO (SFT-specific)
+# ═══════════════════════════════════════════════════════════════════════════════
+# 
+# The following parameters are used in supervised fine-tuning (SFT) but NOT in DPO:
+#
+# ❌ steps_per_eval: DPO doesn't use validation sets (we only have train data)
+# ❌ grad_checkpoint: Could be added for memory savings, but not critical for DPO
+# ❌ use_dora: DoRA is an SFT technique, not applicable to DPO
+# ❌ iters: In DPO we use "steps" instead (more explicit control)
+# ❌ fine_tune_type: Always "lora" for DPO (no other options)
+# ❌ train: Always true for DPO (no inference-only mode)
+#
+# If you see these in SFT configs, don't add them to DPO!
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Expected training time (16GB M1 MacBook Pro):
+# - Precompute stage: ~5-10 minutes for 50 examples
+# - Training stage: ~5-10 minutes for 100 steps
+# - Total: ~15-20 minutes for a quick experiment
+
+# Recommended workflow:
+# 1. Start with these defaults
+# 2. Run for 50-100 steps
+# 3. Check if reward_diff is increasing (good!) or plateauing (done!)
+# 4. If reward_diff keeps increasing, train for more steps
+# 5. If you see overfitting (reward_diff decreases), reduce steps or increase dropout

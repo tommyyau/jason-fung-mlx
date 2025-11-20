@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-11-11T19:26:09.805521",
+  "runs": [
+    {
+      "run_name": "SmolLM3-3B_run3",
+      "run_path": "/Users/tommyyau/VSCode/jason-fung-mlx/models/SmolLM3-3B_run3",
+      "timestamp": "2025-11-11T19:26:09.804458",
+      "hyperparameters": {
+        "model": "HuggingFaceTB/SmolLM3-3B",
+        "learning_rate": 1e-05,
+        "batch_size": 2,
+        "iters": 1800,
+        "max_seq_length": 512,
+        "num_layers": 16,
+        "lora_rank": 8,
+        "grad_accumulation_steps": 4,
+        "grad_checkpoint": true,
+        "steps_per_eval": 200,
+        "steps_per_report": 50,
+        "save_every": 500
+      },
+      "training_metrics": {},
+      "final_metrics": {}
+    },
+    {
+      "run_name": "SmolLM3-3B_run4",
+      "run_path": "/Users/tommyyau/VSCode/jason-fung-mlx/models/SmolLM3-3B_run4",
+      "timestamp": "2025-11-11T19:26:09.804906",
+      "hyperparameters": {
+        "model": "HuggingFaceTB/SmolLM3-3B",
+        "learning_rate": 1e-05,
+        "batch_size": 2,
+        "iters": 1600,
+        "max_seq_length": 700,
+        "num_layers": 12,
+        "lora_rank": 8,
+        "grad_accumulation_steps": 16,
+        "grad_checkpoint": true,
+        "steps_per_eval": 50,
+        "steps_per_report": 50,
+        "save_every": 500
+      },
+      "training_metrics": {},
+      "final_metrics": {}
+    }
+  ],
+  "comparison_table": "========================================================================================================================\nTRAINING RUNS COMPARISON\n========================================================================================================================\n\nHYPERPARAMETERS\n------------------------------------------------------------------------------------------------------------------------\n         Run |           LR |        Batch |        Iters |      Seq Len |  LoRA Layers |    LoRA Rank |     Grad Acc |   Grad Check\n------------------------------------------------------------------------------------------------------------------------\nSmolLM3-3B_run3 |     1.00e-05 |            2 |         1800 |          512 |           16 |            8 |            4 |            \u2713\nSmolLM3-3B_run4 |     1.00e-05 |            2 |         1600 |          700 |           12 |            8 |           16 |            \u2713\n\n\nTRAINING METRICS\n------------------------------------------------------------------------------------------------------------------------\n            Run |      Final Iter |      Train Loss |        Val Loss |      Tokens/sec |          It/sec |   Peak Mem (GB)\n------------------------------------------------------------------------------------------------------------------------\nSmolLM3-3B_run3 |             N/A |             N/A |             N/A |             N/A |             N/A |             N/A\nSmolLM3-3B_run4 |             N/A |             N/A |             N/A |             N/A |             N/A |             N/A\n\n========================================================================================================================"
+}

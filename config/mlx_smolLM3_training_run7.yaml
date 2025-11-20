@@ -1,0 +1,79 @@
+# MLX Training Configuration - Run 7 (Fix Overfitting)
+# Direct CLI usage: python -m mlx_lm lora --config config/mlx_smolLM3_training_run7.yaml
+#
+# GOAL: Fix overfitting and repetition loops by reducing to 1 EPOCH
+#
+# Key changes from run6:
+# - iters: 4800 → 1600 (1 EPOCH instead of 3 - fixes overfitting/repetition loops)
+# - steps_per_eval: 100 → 50 (more frequent validation checks)
+# - steps_per_report: 100 → 50 (more frequent progress updates)
+# - max_seq_length: 800 → 1024 (match original data preparation)
+#
+# WHY 1 EPOCH?
+# - Training data has 1600 examples, all from same source (Jason Fung)
+# - High similarity between examples means model memorizes with 2+ epochs
+# - Causes repetition loops (model repeats same sentence 30-40 times)
+# - 1 epoch = see each example once = learn style without memorizing
+#
+# RATIONALE:
+# Data audit shows 98.2% is on-topic (53% insulin vs CICO, 71.7% high-value)
+# Problem is NOT data quality, it's overfitting from too many epochs
+
+# Base model
+model: HuggingFaceTB/SmolLM3-3B
+
+# Data directory (must contain train.jsonl and valid.jsonl)
+data: data/mlx_training_data
+# Output directory for LoRA adapters
+adapter_path: models/SmolLM3-3B_run7
+
+# Enable training
+train: true
+
+# Fine-tuning method
+fine_tune_type: lora
+
+# Optimizer
+optimizer: adamw
+
+# LoRA configuration (same as run6 - working well)
+num_layers: 8  # Preserve most base model layers
+lora_rank: 8
+lora_alpha: 8  # Reduces LoRA influence, prevents overfitting
+lora_dropout: 0.1  # Regularization to prevent memorization
+
+# Training hyperparameters (optimized for 16GB RAM Apple Silicon)
+learning_rate: 1e-5  # Conservative to prevent catastrophic forgetting
+batch_size: 1  # Memory constraint
+iters: 1600  # ← KEY CHANGE: 1 EPOCH (1600 examples ÷ 1 batch = 1600 iters)
+max_seq_length: 1024  # Restored from 800 - match original data prep
+
+# Gradient handling (same as run6)
+grad_accumulation_steps: 16  # Effective batch size = 16 for stable gradients
+grad_checkpoint: true  # Enable gradient checkpointing to save memory
+
+# Dora configuration
+use_dora: false  # Saves memory
+
+# Training monitoring - MORE FREQUENT
+steps_per_eval: 50  # ← Changed from 100 - watch for overfitting more closely
+steps_per_report: 50  # ← Changed from 100 - more frequent updates
+save_every: 500  # Save checkpoint every 500 steps
+
+# Reproducibility
+seed: 42
+
+# Expected training time:
+# - ~40-50 minutes on 16GB M1 MacBook Pro (1 epoch vs 3 epochs in run6)
+# - Close Cursor/IDEs before training for 50-70% speedup
+# - Monitor: Activity Monitor → Memory tab (should stay GREEN)
+#
+# What to expect:
+# - Training loss should decrease steadily
+# - Validation loss should decrease and stabilize
+# - If validation loss starts increasing before end, stop early (overfitting)
+# - Final checkpoint at 1600 iters is likely the best one
+#
+# After training:
+# - Fuse adapters with: python -m mlx_lm fuse --model HuggingFaceTB/SmolLM3-3B --adapter-path models/SmolLM3-3B_run7 --save-path models/SmolLM3-3B_run7_fused --de-quantize
+# - Test with repetition penalty: python -m mlx_lm generate --model models/SmolLM3-3B_run7_fused --prompt "Should I count calories or focus on insulin?" --repetition-penalty 1.2 --temperature 0.7 --max-tokens 300

@@ -1,0 +1,98 @@
+# MLX Training Configuration - Granite 4.0 H-Tiny
+# Direct CLI usage: python -m mlx_lm lora --config config/mlx_granite-4.0-h-tiny_training.yaml
+#
+# Model: ibm-granite/granite-4.0-h-tiny (7B parameters, hybrid MoE architecture)
+# - Total parameters: 7 billion
+# - Active parameters per inference: ~1 billion (MoE architecture)
+# - Context length: 128K tokens (we use 1024 for training)
+# - Architecture: Hybrid mixture-of-experts (MoE) combining Mamba-2 and transformer
+#
+# Data Format:
+# Granite models use simple text format (not chat format):
+# {"text": "Question: ...\nAnswer: ..."}
+# 
+# To generate this format, run:
+# python3 scripts/phase3-prepare-data-mlx/04c_convert_to_granite_format.py
+#
+# Key settings (AGGRESSIVELY optimized for 16GB RAM Apple Silicon):
+# - 1 epoch training (1600 iterations) to prevent overfitting
+# - Aggressive LoRA settings: 8 layers, rank 4 (7B model needs more memory reduction)
+# - Reduced sequence length: 512 (data is ~200-300 tokens, 1024 was too large)
+# - Validation disabled (steps_per_eval) - uses extra memory
+# - CRITICAL: Close all apps (Cursor, browsers) before training!
+
+# Base model
+model: ibm-granite/granite-4.0-h-tiny
+
+# Data directory (must contain train.jsonl and valid.jsonl in Granite text format)
+# Format: Each line is {"text": "Question: ...\nAnswer: ..."}
+data: data/mlx_training_data
+
+# Output directory for LoRA adapters
+adapter_path: models/granite-4.0-h-tiny
+
+# Enable training
+train: true
+
+# Fine-tuning method
+fine_tune_type: lora
+
+# Data format: text format (not instruction/output format)
+# MLX-LM automatically detects format based on JSON keys:
+# - {"text": "..."} → text format (this is what we use)
+# - {"messages": [...]} → chat format
+# - {"instruction": "...", "output": "..."} → instruction format
+# Note: mask_prompt is NOT supported for text format - only works with chat/instruction formats
+# If you need prompt masking, convert data to chat format first
+
+# Optimizer
+optimizer: adamw
+
+# LoRA configuration (aggressive memory optimization for 7B model on 16GB)
+num_layers: 16  # Reduced from 16 to 8 - critical for 7B model on 16GB systems
+lora_rank: 16  # Reduced from 8 to 4 - saves memory for 7B model
+lora_alpha: 16  # Matches rank for balanced adaptation
+lora_dropout: 0.1  # Regularization to prevent memorization
+
+# Training hyperparameters (aggressively optimized for 16GB RAM Apple Silicon)
+learning_rate: 1e-5  # Conservative to prevent catastrophic forgetting
+batch_size: 1  # Memory constraint for 7B model (cannot increase)
+iters: 1600  # 1 EPOCH (1600 examples ÷ 1 batch = 1600 iters)
+max_seq_length: 512  # Reduced from 1024 - critical for 7B model memory (data is ~200-300 tokens)
+
+# Gradient handling
+grad_accumulation_steps: 8  # Reduced from 16 to 8 - saves memory
+grad_checkpoint: true  # Enable gradient checkpointing to save memory (critical)
+
+# Dora configuration
+use_dora: false  # Disable to save memory on 16GB systems
+
+# Training monitoring
+# steps_per_eval: 50  # DISABLED - validation uses extra memory (causes OOM on 7B model)
+steps_per_report: 50  # Frequent progress updates
+save_every: 500  # Save checkpoint every 500 steps
+
+# Reproducibility
+seed: 42
+
+# Expected training time:
+# - ~60-90 minutes on 16GB M1 MacBook Pro (7B model is larger)
+# - Close Cursor/IDEs before training for 50-70% speedup
+# - Monitor: Activity Monitor → Memory tab (should stay GREEN)
+#
+# What to expect:
+# - Training loss should decrease steadily
+# - Validation loss should decrease and stabilize
+# - If validation loss starts increasing before end, stop early (overfitting)
+# - Final checkpoint at 1600 iters is likely the best one
+#
+# After training:
+# - Test directly with LoRA adapters: python -m mlx_lm generate --model models/granite-4.0-h-tiny-run1 --prompt "Should I count calories or focus on insulin?" --max-tokens 300
+# - Or fuse adapters: python -m mlx_lm fuse --model ibm-granite/granite-4.0-h-tiny --adapter-path models/granite-4.0-h-tiny-run1 --save-path models/granite-4.0-h-tiny-run1_fused --de-quantize
+#
+# Notes on Granite 4.0 H-Tiny:
+# - MoE architecture means only ~1B parameters active per inference (efficient)
+# - Supports very long context (128K tokens) but we use 1024 for training
+# - Hybrid Mamba-2 + transformer architecture (unique to Granite models)
+# - Best practices: Temperature=0.7, TopP=0.8 for inference
+

@@ -1,0 +1,99 @@
+# MLX DPO Training Configuration - Llama 3.2-3B-Instruct (Run 11)
+# Usage: python3 scripts/phase4-fine-tune-model/10_train_dpo.py --config config/mlx_llama-3b_dpo_run11.yaml --stage [precompute|train]
+#
+# DPO (Direct Preference Optimization) trains models to prefer certain responses over others
+# This is different from standard supervised fine-tuning (SFT)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODEL & DATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Base model to train
+model: mlx-community/Llama-3.2-3B-Instruct
+
+# DPO training data (must contain: prompt, chosen, rejected)
+# Format: {"prompt": "Question: ...\nAnswer:", "chosen": "...", "rejected": "..."}
+# Using Llama-generated rejected responses (not Granite)
+data: data/mlx_training_data/dpo_train_llama.jsonl
+
+# Output directory for LoRA adapters
+output_dir: models/llama-3b-dpo-run11
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DPO-SPECIFIC PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Beta: Controls how strongly DPO enforces preference learning
+# - Moderate setting now that data is properly matched
+beta: 0.1
+
+# Length normalization: Divide log probs by number of tokens
+# - true = per-token average log prob (CRITICAL for variable-length responses!)
+# - false = sum of log probs (biased toward shorter responses)
+normalize_by_length: true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LORA CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Number of transformer layers to apply LoRA to (Llama 3.2-3B has 28 layers)
+# Using 12 layers for balanced learning
+num_layers: 12
+
+# LoRA rank: Dimensionality of the low-rank adaptation
+lora_rank: 8
+
+# LoRA alpha: Scaling factor for LoRA updates
+lora_alpha: 16
+
+# LoRA dropout: Regularization to prevent overfitting
+lora_dropout: 0.0
+
+# LoRA scale: Internal scaling parameter
+lora_scale: 10.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TRAINING HYPERPARAMETERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Learning rate: DPO typically uses lower LR than SFT
+# Conservative but reasonable with matched data
+learning_rate: 5e-6
+
+# Training steps: 300 examples × 2 epochs ÷ 8 effective_batch = 75 steps
+steps: 75
+
+# Epochs: Number of passes through the dataset
+epochs: 2
+
+# Batch size: Number of examples per gradient update
+batch_size: 1
+
+# Gradient accumulation steps: Simulate larger batch size
+# Increased from 4 to 8 for smoother gradients (was diverging)
+# Effective batch size = batch_size × grad_accumulation_steps = 8
+grad_accumulation_steps: 8
+
+# Maximum sequence length
+max_seq_length: 1024
+
+# Optimizer
+optimizer: adamw
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MONITORING & CHECKPOINTING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# How often to print training progress (in steps)
+steps_per_report: 1
+
+# How often to save checkpoints (in steps)
+save_every: 50
+
+# Random seed for reproducibility
+seed: 42
+
+# Expected training time (16GB M1 MacBook Pro):
+# - Precompute stage: ~10-15 minutes for 300 examples
+# - Training stage: ~15-20 minutes for 150 steps
+# - Total: ~25-35 minutes

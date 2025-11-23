@@ -1,0 +1,70 @@
+================================================================================
+DPO MODEL TEST
+================================================================================
+
+
+================================================================================
+QUESTION 1: How do I lose weight?
+================================================================================
+
+BASE MODEL RESPONSE:
+--------------------------------------------------------------------------------
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 26965.13it/s]
+To lose weight, you should focus on a combination of a balanced diet, regular exercise, and lifestyle changes. Here are some tips:
+
+1. Balanced Diet: Eat a variety of foods that provide sufficient nutrients. Include plenty of fruits, vegetables, lean proteins, and whole grains in your diet. Limit intake of processed foods, sugary drinks, and high-fat foods.
+
+2. Portion Control: Be mindful of your portion sizes. Even healthy foods can contribute to weight gain if you eat too much of them.
+
+3. Regular Exercise: Aim for at least 150 minutes of moderate-intensity or 75 minutes of vigorous-intensity aerobic activity per week, along with strength training exercises at least twice a week.
+
+4. Stay Hydrated: Drink plenty of water throughout the day. Sometimes, thirst can be mistaken for hunger.
+
+5. Get Enough Sleep: Lack of sleep can disrupt hormones that control hunger and appetite, leading to weight gain. Aim for 7-9 hours of sleep per
+
+DPO MODEL RESPONSE:
+--------------------------------------------------------------------------------
+To lose weight, focus on a balanced diet with whole foods, incorporate regular exercise, get sufficient sleep, manage stress, and consider seeking professional guidance like a nutritionist or doctor.
+
+
+================================================================================
+QUESTION 2: Does counting calories work for weight loss?
+================================================================================
+
+BASE MODEL RESPONSE:
+--------------------------------------------------------------------------------
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 122380.22it/s]
+Counting calories can be an effective strategy for weight loss, but it's not the only approach. It's important to focus on overall dietary patterns, such as consuming a balanced diet rich in whole foods, lean proteins, fruits, vegetables, and healthy fats, while limiting processed foods and added sugars. Additionally, portion control and mindful eating can help manage calorie intake. However, it's essential to remember that sustainable weight loss is best achieved through a combination of a healthy diet and regular physical activity, rather than solely relying on calorie counting.
+
+DPO MODEL RESPONSE:
+--------------------------------------------------------------------------------
+While counting calories can be a useful tool for some people, it's not the only or necessarily the most effective approach for weight loss. Focus on overall dietary patterns, such as consuming whole foods, balanced meals, and mindful eating, which can be more sustainable and beneficial for long-term weight management.
+
+
+================================================================================
+QUESTION 3: Should I eat less and exercise more to lose weight?
+================================================================================
+
+BASE MODEL RESPONSE:
+--------------------------------------------------------------------------------
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 180224.00it/s]
+While reducing calorie intake and increasing physical activity are key components of weight loss, it's important to adopt a balanced approach. Focus on consuming nutrient-dense foods, staying hydrated, and incorporating a mix of cardio and strength training exercises. Consult a healthcare professional or registered dietitian for personalized advice.
+
+DPO MODEL RESPONSE:
+--------------------------------------------------------------------------------
+While eating less and exercising more are common weight loss strategies, they are not always the most effective or sustainable solutions. A balanced approach that includes a nutritious diet, regular physical activity, and behavioral changes is often more successful in achieving and maintaining weight loss. It's also important to consider individual factors such as genetics, metabolism, and overall health. Consulting with a healthcare professional or a registered dietitian can provide personalized guidance.
+
+
+================================================================================
+QUESTION 4: What causes weight gain?
+================================================================================
+
+BASE MODEL RESPONSE:
+--------------------------------------------------------------------------------
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 122380.22it/s]
+Weight gain can be caused by various factors, including consuming more calories than your body burns, a sedentary lifestyle, hormonal imbalances, certain medical conditions, and genetic predisposition.
+
+DPO MODEL RESPONSE:
+--------------------------------------------------------------------------------
+Weight gain is typically caused by consuming more calories than your body burns, leading to an accumulation of excess calories as fat. Factors such as diet, physical activity, hormonal imbalances, genetics, and certain medications can influence weight gain.
+

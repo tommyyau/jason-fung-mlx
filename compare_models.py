@@ -18,7 +18,7 @@ from mlx_lm import load, generate
 BASE_MODEL = "ibm-granite/granite-4.0-h-micro"
 DPO_MODEL = "models/granite-4.0-h-micro-dpo-fused"
 
-def generate_response(model, tokenizer, prompt, max_tokens=300):
+def generate_response(model, tokenizer, prompt, max_tokens=500):
     """Generate response from a model."""
     # Format prompt for Granite models (Question/Answer format)
     formatted_prompt = f"Question: {prompt}\nAnswer:"
@@ -36,7 +36,7 @@ def generate_response(model, tokenizer, prompt, max_tokens=300):
 def main():
     parser = argparse.ArgumentParser(description="Compare base vs DPO-trained model responses")
     parser.add_argument("question", type=str, help="Question to ask both models")
-    parser.add_argument("--max-tokens", type=int, default=300, help="Maximum tokens to generate")
+    parser.add_argument("--max-tokens", type=int, default=500, help="Maximum tokens to generate")
     args = parser.parse_args()
     
     question = args.question

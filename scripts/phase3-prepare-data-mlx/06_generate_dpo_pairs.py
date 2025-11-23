@@ -21,8 +21,8 @@ from mlx_lm import load, generate
 # Config
 # ─────────────────────────────
 INPUT_FILE = "data/mlx_training_data/dpo_train_curated.jsonl"  # Curated top 300 examples
-OUTPUT_FILE = "data/mlx_training_data/dpo_train.jsonl"
-MODEL_PATH = "ibm-granite/granite-4.0-h-micro"
+OUTPUT_FILE = "data/mlx_training_data/dpo_train_llama.jsonl"  # Llama-specific DPO data
+MODEL_PATH = "mlx-community/Llama-3.2-3B-Instruct"  # Use Llama to generate rejected responses
 LIMIT = None  # Process all curated examples (300)
 SEED = 42
 

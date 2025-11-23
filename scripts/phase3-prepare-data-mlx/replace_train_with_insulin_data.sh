@@ -40,3 +40,7 @@ echo "  2. Train your model: ./train_and_test_run9.sh"
 
 
 
+
+
+
+

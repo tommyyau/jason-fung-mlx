@@ -52,29 +52,49 @@ def dpo_loss(policy_chosen_logps, policy_rejected_logps, ref_chosen_logps, ref_r
     
     return losses.mean(), chosen_rewards.mean(), rejected_rewards.mean()
 
-def get_batch_logps(model, input_ids, attention_mask, labels):
+def get_batch_logps(model, input_ids, attention_mask, labels, response_mask=None, normalize_by_length=True):
     """
     Compute log probabilities for the given labels.
+
+    Args:
+        response_mask: Mask indicating which tokens are part of the response (not prompt).
+                      If provided, only response tokens contribute to the log probability.
+        normalize_by_length: If True, return average log prob per token instead of sum.
+                           Critical for handling variable-length responses!
     """
     logits = model(input_ids)
-    
+
     # Shift logits and labels for next-token prediction
     shift_logits = logits[:, :-1, :]
     shift_labels = labels[:, 1:]
-    
+
     # Compute log probs
     log_probs = nn.losses.cross_entropy(shift_logits, shift_labels, reduction='none')
-    
-    # Apply mask (ignore padding)
+
+    # Apply mask (ignore padding AND prompt tokens)
     shift_mask = attention_mask[:, 1:]
-    
+
+    # CRITICAL FIX: If response_mask is provided, only compute logps over response tokens
+    if response_mask is not None:
+        shift_response_mask = response_mask[:, 1:]
+        shift_mask = shift_mask * shift_response_mask
+
     # Invert cross entropy to get log prob (CE = -log_prob)
     log_probs = -log_probs * shift_mask
-    
-    # Sum over sequence length
-    sum_log_probs = log_probs.sum(axis=1)
-    
-    return sum_log_probs
+
+    # CRITICAL FIX: Length normalization to handle variable-length responses
+    if normalize_by_length:
+        # Count number of tokens in response (non-zero mask values)
+        num_tokens = shift_mask.sum(axis=1)
+        # Avoid division by zero
+        num_tokens = mx.maximum(num_tokens, mx.array([1.0]))
+        # Average log prob per token
+        avg_log_probs = log_probs.sum(axis=1) / num_tokens
+        return avg_log_probs
+    else:
+        # Sum over sequence length (original behavior)
+        sum_log_probs = log_probs.sum(axis=1)
+        return sum_log_probs
 
 # ─────────────────────────────
 # Data Loading
@@ -97,32 +117,54 @@ def prepare_batch(batch_data, tokenizer, max_length=1024):
     rejected_masks = []
     chosen_labels = []
     rejected_labels = []
-    
+    chosen_response_masks = []
+    rejected_response_masks = []
+
     for item in batch_data:
         prompt = item['prompt']
         chosen = item['chosen']
         rejected = item['rejected']
-        
+
+        # CRITICAL FIX: Tokenize prompt separately to create response mask
+        prompt_tokens = tokenizer.encode(prompt)
+        prompt_len = len(prompt_tokens)
+
         chosen_text = prompt + chosen
         rejected_text = prompt + rejected
-        
+
         chosen_tokens = tokenizer.encode(chosen_text)
         rejected_tokens = tokenizer.encode(rejected_text)
-        
+
         # Truncate
         chosen_tokens = chosen_tokens[:max_length]
         rejected_tokens = rejected_tokens[:max_length]
-        
+
+        # Create response masks (1 for response tokens, 0 for prompt tokens)
+        chosen_response_mask = mx.concatenate([
+            mx.zeros(min(prompt_len, len(chosen_tokens))),
+            mx.ones(max(0, len(chosen_tokens) - prompt_len))
+        ])
+        rejected_response_mask = mx.concatenate([
+            mx.zeros(min(prompt_len, len(rejected_tokens))),
+            mx.ones(max(0, len(rejected_tokens) - prompt_len))
+        ])
+
         chosen_input_ids.append(mx.array(chosen_tokens)[None, :])
         rejected_input_ids.append(mx.array(rejected_tokens)[None, :])
-        
+
         chosen_masks.append(mx.ones((1, len(chosen_tokens))))
         rejected_masks.append(mx.ones((1, len(rejected_tokens))))
-        
+
         chosen_labels.append(mx.array(chosen_tokens)[None, :])
         rejected_labels.append(mx.array(rejected_tokens)[None, :])
 
-    return chosen_input_ids, rejected_input_ids, chosen_masks, rejected_masks, chosen_labels, rejected_labels
+        chosen_response_masks.append(chosen_response_mask[None, :])
+        rejected_response_masks.append(rejected_response_mask[None, :])
+
+    return (chosen_input_ids, rejected_input_ids,
+            chosen_masks, rejected_masks,
+            chosen_labels, rejected_labels,
+            chosen_response_masks, rejected_response_masks)
 
 # ─────────────────────────────
 # Main
@@ -174,12 +216,13 @@ def main():
     
     # Get all parameters with proper type conversion
     model_path = get_arg('model')
-    data_path = get_arg('data')
+    data_path = get_arg('data', 'data/mlx_training_data/dpo_train_gemini.jsonl')
     output_dir = get_arg('output_dir', 'models/dpo_adapter')
     learning_rate = float(get_arg('learning_rate', 1e-6))
     beta = float(get_arg('beta', 0.1))
     epochs = int(get_arg('epochs', 1))
     steps = int(get_arg('steps', 100))
+    normalize_by_length = bool(get_arg('normalize_by_length', True))
     
     # LoRA parameters
     lora_rank = int(get_arg('lora_rank', 8))
@@ -216,6 +259,7 @@ def main():
     print(f"Stage: {args.stage}")
     print(f"\nDPO Parameters:")
     print(f"  Beta: {beta}")
+    print(f"  Length Normalization: {normalize_by_length}")
     print(f"\nLoRA Parameters:")
     print(f"  Rank: {lora_rank}, Alpha: {lora_alpha}, Dropout: {lora_dropout}")
     print(f"  Scale: {lora_scale}, Layers: {num_layers}")
@@ -240,11 +284,11 @@ def main():
         
         print("Computing logps...")
         for i, item in enumerate(data):
-            c_ids, r_ids, c_mask, r_mask, c_lbls, r_lbls = prepare_batch([item], tokenizer, max_seq_length)
-            
-            # Compute logps
-            c_logp = get_batch_logps(model, c_ids[0], c_mask[0], c_lbls[0]).item()
-            r_logp = get_batch_logps(model, r_ids[0], r_mask[0], r_lbls[0]).item()
+            c_ids, r_ids, c_mask, r_mask, c_lbls, r_lbls, c_resp_mask, r_resp_mask = prepare_batch([item], tokenizer, max_seq_length)
+
+            # Compute logps (only over response tokens!)
+            c_logp = get_batch_logps(model, c_ids[0], c_mask[0], c_lbls[0], c_resp_mask[0], normalize_by_length).item()
+            r_logp = get_batch_logps(model, r_ids[0], r_mask[0], r_lbls[0], r_resp_mask[0], normalize_by_length).item()
             
             item['ref_chosen_logps'] = c_logp
             item['ref_rejected_logps'] = r_logp
@@ -288,10 +332,10 @@ def main():
         optimizer = optim.AdamW(learning_rate=learning_rate)
         
         # Loss function
-        def loss_fn(model, chosen_ids, rejected_ids, chosen_mask, rejected_mask, chosen_lbls, rejected_lbls, ref_c_logp, ref_r_logp):
-            policy_chosen_logps = get_batch_logps(model, chosen_ids, chosen_mask, chosen_lbls)
-            policy_rejected_logps = get_batch_logps(model, rejected_ids, rejected_mask, rejected_lbls)
-            
+        def loss_fn(model, chosen_ids, rejected_ids, chosen_mask, rejected_mask, chosen_lbls, rejected_lbls, chosen_resp_mask, rejected_resp_mask, ref_c_logp, ref_r_logp):
+            policy_chosen_logps = get_batch_logps(model, chosen_ids, chosen_mask, chosen_lbls, chosen_resp_mask, normalize_by_length)
+            policy_rejected_logps = get_batch_logps(model, rejected_ids, rejected_mask, rejected_lbls, rejected_resp_mask, normalize_by_length)
+
             loss, chosen_reward, rejected_reward = dpo_loss(
                 policy_chosen_logps, policy_rejected_logps,
                 mx.array([ref_c_logp]), mx.array([ref_r_logp]),
@@ -313,13 +357,13 @@ def main():
                 if current_step >= steps:
                     break
                 
-                c_ids, r_ids, c_mask, r_mask, c_lbls, r_lbls = prepare_batch([item], tokenizer, max_seq_length)
-                
+                c_ids, r_ids, c_mask, r_mask, c_lbls, r_lbls, c_resp_mask, r_resp_mask = prepare_batch([item], tokenizer, max_seq_length)
+
                 ref_c = item['ref_chosen_logps']
                 ref_r = item['ref_rejected_logps']
-                
+
                 (loss, c_reward, r_reward), grads = loss_and_grad_fn(
-                    model, c_ids[0], r_ids[0], c_mask[0], r_mask[0], c_lbls[0], r_lbls[0], ref_c, ref_r
+                    model, c_ids[0], r_ids[0], c_mask[0], r_mask[0], c_lbls[0], r_lbls[0], c_resp_mask[0], r_resp_mask[0], ref_c, ref_r
                 )
                 
                 # Accumulate gradients

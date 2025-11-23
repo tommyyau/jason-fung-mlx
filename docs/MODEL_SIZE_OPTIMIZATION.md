@@ -152,3 +152,7 @@ python3 scripts/phase4-fine-tune-model/07_fuse_lora.py --no-dequantize ...
 **TL;DR**: Use `--no-dequantize` (or omit `--de-quantize`) when fusing to keep models at ~2GB. Quantized models work perfectly fine for MLX inference and are much smaller!
 
 
+
+
+
+

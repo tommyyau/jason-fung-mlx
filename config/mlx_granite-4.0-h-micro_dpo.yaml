@@ -13,7 +13,7 @@ model: ibm-granite/granite-4.0-h-micro
 
 # DPO training data (must contain: prompt, chosen, rejected)
 # Format: {"prompt": "Question: ...\nAnswer:", "chosen": "...", "rejected": "..."}
-data: data/mlx_training_data/dpo_train.jsonl
+data: data/mlx_training_data/dpo_train_gemini.jsonl
 
 # Output directory for LoRA adapters
 output_dir: models/granite-4.0-h-micro-dpo
@@ -26,7 +26,15 @@ output_dir: models/granite-4.0-h-micro-dpo
 # - Higher beta (0.5) = stronger preference enforcement, faster learning, risk of overfitting
 # - Lower beta (0.01) = gentler learning, more stable, slower convergence
 # - Standard: 0.1 works well for most cases
-beta: 0.1
+# - REDUCED from 0.2 to 0.1 after SECOND instability (reward_diff→5.8)
+# - INCREASED to 0.5 to prevent "calorie loop" collapse (strong anchor)
+beta: 0.5
+
+# Length normalization: Divide log probs by number of tokens
+# - true = per-token average log prob (CRITICAL for variable-length responses!)
+# - false = sum of log probs (biased toward shorter responses)
+# - MUST be true when chosen/rejected have different lengths
+normalize_by_length: true
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # LORA CONFIGURATION
@@ -52,7 +60,7 @@ lora_alpha: 16
 # - 0.0 = no dropout (faster, risk of overfitting)
 # - 0.1 = light regularization (good default)
 # - 0.2+ = heavy regularization (use if overfitting)
-lora_dropout: 0.0
+lora_dropout: 0.2
 
 # LoRA scale: Internal scaling parameter
 # - Usually 10.0 (MLX default)
@@ -67,17 +75,22 @@ lora_scale: 10.0
 # - DPO typically uses lower LR than SFT (1e-6 to 5e-6)
 # - Too high = unstable training, divergence
 # - Too low = very slow learning
+# - REDUCED from 2e-5 to 1e-5 after SECOND instability (reward_diff→5.8)
+# - REDUCED to 5e-6 after THIRD instability (reward_diff→6.4)
+# - Testing 4e-6 with dropout 0.2 and 50 steps (5e-6 hit 2.78)
+# - REDUCED to 1e-6 with Beta 0.5 to fix collapse
 learning_rate: 1e-6
 
 # Training steps: Total number of gradient updates
 # - DPO needs fewer steps than SFT (50-500 is typical)
 # - Monitor reward_diff - stop when it plateaus
-steps: 300
+# - Testing 50 steps with 5e-6 LR and 0.2 dropout
+steps: 50
 
 # Epochs: Number of passes through the dataset
 # - Usually 1 for DPO (we iterate through data once)
 # - Set to 2-3 if you have very little data
-epochs: 1
+epochs: 2
 
 # Batch size: Number of examples per gradient update
 # - Set to 1 for 16GB RAM (memory constraint)
@@ -88,7 +101,8 @@ batch_size: 1
 # - Effective batch size = batch_size × grad_accumulation_steps
 # - Higher = more stable gradients, but slower
 # - 4-16 is typical for DPO
-grad_accumulation_steps: 8
+# - INCREASED from 2 to 4 for better gradient stability with high LR
+grad_accumulation_steps: 4
 
 # Maximum sequence length: Truncate longer examples
 # - Longer = more context, but more memory
@@ -108,12 +122,12 @@ optimizer: adamw
 # How often to print training progress (in steps)
 # - Lower = more verbose logging
 # - Higher = cleaner output
-steps_per_report: 10
+steps_per_report: 1
 
 # How often to save checkpoints (in steps)
 # - Set to 0 to disable checkpointing
 # - Useful for long training runs in case of crashes
-save_every: 50
+save_every: 10
 
 # Random seed for reproducibility
 # - Same seed = same results (if everything else is identical)
